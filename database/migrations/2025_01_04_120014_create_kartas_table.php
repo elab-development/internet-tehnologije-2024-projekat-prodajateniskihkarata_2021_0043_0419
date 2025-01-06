@@ -17,7 +17,8 @@ return new class extends Migration {
             $table->unsignedBigInteger('dogadjaj_id');
             $table->unsignedBigInteger('tip_karte_id');
             $table->string('status_karte');
-            $table->string('qr_kod');
+            //$table->string('qr_kod');
+            $table->string('qr_kod')->unique();
             $table->timestamps();
     
             // Definisanje stranih ključeva

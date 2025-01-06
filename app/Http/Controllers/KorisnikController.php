@@ -13,7 +13,7 @@ class KorisnikController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json(Korisnik::all(), 200);
     }
 
     /**
@@ -29,15 +29,34 @@ class KorisnikController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Validacija podataka iz zahteva
+        $validatedData = $request->validate([
+            'ime' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:korisniks',
+            'lozinka' => 'required|string|min:8',
+            'uloga' => 'required|string|in:admin,auth_user,guest',
+            'datum_registracije' => 'required|date_format:Y-m-d H:i:s'
+        ]);
+
+        // Kreiranje novog korisnika
+        $korisnik = Korisnik::create($validatedData);
+
+        // Vraćanje novokreiranog korisnika sa status kodom 201
+        return response()->json($korisnik, 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        $korisnik = Korisnik::find($id);
+
+        if (!$korisnik) {
+            return response()->json(['error' => 'Korisnik nije pronađen'], 404);
+        }
+
+        return response()->json($korisnik, 200);
     }
 
     /**
@@ -51,17 +70,49 @@ class KorisnikController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
+        // Validacija podataka iz zahteva
+        $validatedData = $request->validate([
+            'ime' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:korisniks,email,' . $id,
+            'lozinka' => 'sometimes|string|min:8',
+            'uloga' => 'required|string|in:admin,auth_user,guest',
+            'datum_registracije' => 'required|date_format:Y-m-d H:i:s'
+        ]);
+
+        // Pronalazak korisnika po ID-ju
+        $korisnik = Korisnik::find($id);
+
+        if (!$korisnik) {
+            return response()->json(['error' => 'Korisnik nije pronađen'], 404);
+        }
+
+        // Ažuriranje lozinke ako je postavljena
+        if (isset($validatedData['lozinka'])) {
+            $validatedData['lozinka'] = Hash::make($validatedData['lozinka']);
+        } else {
+            unset($validatedData['lozinka']);
+        }
+
+        // Ažuriranje korisnika
+        $korisnik->update($validatedData);
+        return response()->json($korisnik, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $korisnik = Korisnik::find($id);
+
+        if (!$korisnik) {
+            return response()->json(['error' => 'Korisnik nije pronađen'], 404);
+        }
+
+        $korisnik->delete();
+        return response()->json(null, 204);
     }
 
     public function promeniLozinku(Request $request, Korisnik $korisnik)

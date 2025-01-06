@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('ime_dogadjaja');
             $table->string('lokacija');
-            $table->text('opis');
+            $table->text('opis')->nullable();
             $table->string('status');
             $table->timestamp('datum_registracije');
             $table->timestamps();

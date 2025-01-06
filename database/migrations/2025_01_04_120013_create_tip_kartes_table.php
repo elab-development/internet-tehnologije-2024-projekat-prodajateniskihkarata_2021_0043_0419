@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('ime_tipa_karte');
             $table->decimal('cena', 8, 2);
-            $table->text('opis_benefita');
+            $table->text('opis_benefita')->nullable();
             $table->integer('broj_benefita');
             $table->unsignedBigInteger('dogadjaj_id');
             $table->timestamps();

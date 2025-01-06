@@ -12,6 +12,7 @@ use App\Http\Controllers\KartaController;
 use App\Http\Controllers\TipKarteController;
 use App\Http\Controllers\PlacanjeController;
 
+
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
@@ -30,3 +31,8 @@ Route::get('dogadjaji/external-data', [DogadjajController::class, 'fetchExternal
 
 Route::get('export-dogadjaji', [DogadjajController::class, 'export']);
 
+
+
+Route::middleware('api')->group(function () {
+    Route::apiResource('dogadjaji', DogadjajController::class);
+});

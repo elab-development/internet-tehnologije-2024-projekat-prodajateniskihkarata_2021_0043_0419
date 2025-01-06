@@ -16,16 +16,17 @@ return new class extends Migration {
             $table->decimal('iznos', 8, 2);
             $table->timestamp('datum_transakcije');
             $table->string('status_transakcije');
-            $table->string('tip_placanja');
+            $table->string('tip_placanja'); // Tip plaćanja (npr. kreditna kartica, PayPal)
             $table->timestamps();
-    
+
             // Dodavanje indeksa za strani ključ 
             $table->index('korisnik_id');
-    
+
             // Definisanje stranog ključa sa referencama 
             $table->foreign('korisnik_id')->references('id')->on('korisniks')->onDelete('cascade');
         });
     }
+
 
     /**
      * Reverse the migrations.
