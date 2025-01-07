@@ -3,12 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
 
-class Korisnik extends Model
+class Korisnik extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\KorisnikFactory> */
-    use HasFactory;
+    use HasFactory, HasApiTokens;
 
     protected $fillable = [
         'ime',
@@ -36,6 +36,7 @@ class Korisnik extends Model
     {
         return $this->hasMany(Karta::class);
     }
+
     public function placanja()
     {
         return $this->hasMany(Placanje::class);

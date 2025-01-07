@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->string('email')->unique();
             $table->string('lozinka');
             $table->string('uloga');
-            $table->timestamp('datum_registracije');
+            $table->timestamp('datum_registracije')->nullable();
             //$table->foreignId('dogadjaj_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
