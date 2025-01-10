@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Korisnik;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Container\Attributes;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
+
 
 class KorisnikController extends Controller
 {
@@ -13,7 +17,28 @@ class KorisnikController extends Controller
      */
     public function index()
     {
-        return response()->json(Korisnik::all(), 200);
+        //return response()->json(Korisnik::all(), 200);
+
+
+
+        // Keširanje liste korisnika na 60 minuta
+        $korisnici = Cache::remember('korisnici', 60 * 60, function () {
+            return Korisnik::all();
+        });
+
+        return response()->json($korisnici, 200);
+
+
+
+
+
+        // try {
+        //     $korisnici = Korisnik::all();
+        //     return response()->json($korisnici, 200);
+        // } catch (\Exception $e) {
+        //     Log::error('Greška u metodi index: ' . $e->getMessage());
+        //     return response()->json(['error' => 'Internal Server Error'], 500);
+        // }
     }
 
     /**
@@ -40,6 +65,9 @@ class KorisnikController extends Controller
 
         // Kreiranje novog korisnika
         $korisnik = Korisnik::create($validatedData);
+
+        // Uklanjanje keša za listu korisnika
+        Cache::forget('korisnici');
 
         // Vraćanje novokreiranog korisnika sa status kodom 201
         return response()->json($korisnik, 201);
@@ -116,19 +144,19 @@ class KorisnikController extends Controller
     }
 
     public function promeniLozinku(Request $request, Korisnik $korisnik)
-{
-    $request->validate([
-        'stara_lozinka' => 'required',
-        'nova_lozinka' => 'required|min:8',
-    ]);
+    {
+        $request->validate([
+            'stara_lozinka' => 'required',
+            'nova_lozinka' => 'required|min:8',
+        ]);
 
-    if (!Hash::check($request->stara_lozinka, $korisnik->lozinka)) {
-        return response()->json(['error' => 'Stara lozinka nije ispravna'], 400);
+        if (!Hash::check($request->stara_lozinka, $korisnik->lozinka)) {
+            return response()->json(['error' => 'Stara lozinka nije ispravna'], 400);
+        }
+
+        $korisnik->lozinka = Hash::make($request->nova_lozinka);
+        $korisnik->save();
+
+        return response()->json(['message' => 'Lozinka je uspešno promenjena']);
     }
-
-    $korisnik->lozinka = Hash::make($request->nova_lozinka);
-    $korisnik->save();
-
-    return response()->json(['message' => 'Lozinka je uspešno promenjena']);
-}
 }

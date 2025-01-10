@@ -13,16 +13,68 @@ class DogadjajController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
-    {
-        $query = Dogadjaj::query();
 
-        if ($request->has('status')) {
-            $query->where('status', $request->input('status'));
-        }
+    // public function index(Request $request)
+    // {
+    //     $query = Dogadjaj::query();
 
-        return $query->paginate(10); // Paginacija sa 10 rezultata po stranici
-    }
+    //     if ($request->has('status')) {
+    //         $query->where('status', $request->input('status'));
+    //     }
+
+    //     return $query->paginate(10); // Paginacija sa 10 rezultata po stranici
+    // }
+
+
+    // GPT
+    // public function index(Request $request)
+    // {
+    //     $query = Dogadjaj::query();
+
+    //     // Filtriranje po imenu događaja (primer)
+    //     if ($request->has('naziv')) {
+    //         $query->where('naziv', 'like', '%' . $request->naziv . '%');
+    //     }
+
+    //     // Filtriranje po datumu
+    //     if ($request->has('datum_od') && $request->has('datum_do')) {
+    //         $query->whereBetween('datum', [$request->datum_od, $request->datum_do]);
+    //     }
+
+    //     // Paginacija (podrazumevano 10 po stranici)
+    //     $dogadjaji = $query->paginate($request->get('per_page', 10));
+
+    //     return response()->json($dogadjaji);
+    // }
+
+
+
+     // Metoda za paginaciju događaja
+     public function index(Request $request)
+     {
+         // Dohvatanje događaja sa paginacijom
+         $dogadjaji = Dogadjaj::paginate(10);
+         return response()->json($dogadjaji);
+     }
+ 
+     // Metoda za filtriranje događaja
+     public function filter(Request $request)
+     {
+         $query = Dogadjaj::query();
+ 
+         // Filtriranje po nazivu
+         if ($request->has('ime_dogadjaja')) {
+             $query->where('ime_dogadjaja', 'like', '%' . $request->input('ime_dogadjaja') . '%');
+         }
+ 
+         // Filtriranje po datumu
+         if ($request->has('datum')) {
+             $query->whereDate('datum_registracije', $request->input('datum'));
+         }
+ 
+         $dogadjaji = $query->paginate(10);
+         return response()->json($dogadjaji);
+     }
 
     /**
      * Show the form for creating a new resource.

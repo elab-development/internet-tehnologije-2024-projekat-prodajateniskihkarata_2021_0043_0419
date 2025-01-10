@@ -14,32 +14,101 @@ use App\Http\Controllers\PlacanjeController;
 use App\Http\Controllers\AuthController;
 
 use App\Http\Controllers\ApiController;
+use Illuminate\Support\Facades\Cache;
 
 
+// Rute za autentifikaciju
+Route::post('register', [AuthController::class, 'register']);
+Route::post('login', [AuthController::class, 'login']);
+Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('reset-password', [AuthController::class, 'resetPassword']);
+Route::get('password/reset/{token}', [AuthController::class, 'showResetForm'])->name('password.reset');
+Route::post('password/reset', [AuthController::class, 'resetPassword']);
 
+// Rute za neulogovane korisnike (gost)
+Route::get('/guest-view-dogadjaj/{id}', [ApiController::class, 'showDogadjaj'])->name('api.guest.viewDogadjaj');
+Route::get('/guest-view-dogadjaji', [ApiController::class, 'indexDogadjaji'])->name('api.guest.indexDogadjaji');
+Route::get('/guest-view', [ApiController::class, 'guestView'])->name('api.guest.view');
+
+// Rute za paginaciju i filtriranje događaja (dostupne svima)
+Route::get('dogadjaji', [DogadjajController::class, 'index']);
+Route::get('dogadjaji/filter', [DogadjajController::class, 'filter']);
+
+// Rute zaštićene middleware-om 'auth:sanctum'
+Route::middleware('auth:sanctum')->group(function () {
+    // Ruta za prikaz autentifikovanog korisnika
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+
+    // Dodatne rute za autentifikovane korisnike
+    Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('korisnici/{korisnik}/promena-lozinke', [KorisnikController::class, 'promeniLozinku']);
+    Route::post('upload-fajlova', [FileController::class, 'store'])->name('upload.store');
+    Route::get('dogadjaji/external-data', [DogadjajController::class, 'fetchExternalData']);
+    Route::get('export-dogadjaji', [DogadjajController::class, 'export']);
+
+    // Resource rute
+    Route::apiResource('korisnici', KorisnikController::class);
+    Route::apiResource('dogadjaji', DogadjajController::class);
+    Route::apiResource('karte', KartaController::class);
+    Route::apiResource('tipovi-karata', TipKarteController::class);
+    Route::apiResource('placanja', PlacanjeController::class);
+
+    // Admin rute
+    Route::middleware(['role:admin'])->group(function () {
+        Route::post('/admin-create', [ApiController::class, 'create'])->name('api.admin.create');
+        Route::put('/admin-update', [ApiController::class, 'update'])->name('api.admin.update');
+        Route::delete('/admin-delete', [ApiController::class, 'delete'])->name('api.admin.delete');
+    });
+
+    // Autentifikovani korisnici
+    Route::middleware(['role:auth_user'])->group(function () {
+        Route::post('/purchase-tickets', [ApiController::class, 'purchaseTickets'])->name('api.purchase.tickets');
+        Route::post('/reserve-tickets', [ApiController::class, 'reserveTickets'])->name('api.reserve.tickets');
+    });
+});
+
+// Ruta za prikaz forme za upload fajlova (ako je potrebno)
+Route::get('upload-fajlova', [FileController::class, 'create'])->name('upload.create');
+
+// Ruta za čuvanje uploadovanih fajlova
+Route::post('upload-fajlova', [FileController::class, 'store'])->name('upload.store');
+
+Route::get('upload', [FileController::class, 'create'])->name('upload.create');
+Route::post('upload', [FileController::class, 'store'])->name('upload.store');
+
+Route::delete('clear-cache', function () {
+    Cache::forget('korisnici');
+    return response()->json(['message' => 'Cache cleared'], 200);
+});
+
+
+// STARE, RAZBACANE I DUPLIRANE RUTE
+/*
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+// Resource ruta za CRUD operacije korisnika
 Route::apiResource('korisnici', KorisnikController::class);
 Route::apiResource('dogadjaji', DogadjajController::class);
 Route::apiResource('karte', KartaController::class);
 Route::apiResource('tipovi-karata', TipKarteController::class);
 Route::apiResource('placanja', PlacanjeController::class);
 
+
+// Ostali tipovi API ruta
 Route::post('korisnici/{korisnik}/promena-lozinke', [KorisnikController::class, 'promeniLozinku']);
-
 Route::post('upload-fajlova', [FileController::class, 'upload']);
-
 Route::get('dogadjaji/external-data', [DogadjajController::class, 'fetchExternalData']);
-
 Route::get('export-dogadjaji', [DogadjajController::class, 'export']);
 
 
 
-// Route::middleware('api')->group(function () {
-//     Route::apiResource('dogadjaji', DogadjajController::class);
-// });
+Route::middleware('api')->group(function () {
+    Route::apiResource('dogadjaji', DogadjajController::class);
+});
 
 
 // Rute za autentifikaciju
@@ -47,8 +116,10 @@ Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->post('logout', [AuthController::class, 'logout']);
 
+// Rute zaštićene middleware-om 'auth:sanctum'
 Route::middleware('auth:sanctum')->group(function () {
     // Resource rute
+    // Resource rute samo za autentifikovane korisnike
     Route::apiResource('korisnici', KorisnikController::class);
     Route::apiResource('dogadjaji', DogadjajController::class);
     Route::apiResource('karte', KartaController::class);
@@ -71,22 +142,46 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
+// //rutta za paginaciju i filtriranje
+Route::get('dogadjaji', [DogadjajController::class, 'index']);
+Route::get('dogadjaji/filter', [DogadjajController::class, 'filter']);
 
-// Route::middleware(['auth:sanctum'])->group(function () {
-//     Route::middleware(['role:admin'])->group(function () {
-//         Route::post('/admin-create', [ApiController::class, 'create'])->name('api.admin.create');
-//         Route::put('/admin-update', [ApiController::class, 'update'])->name('api.admin.update');
-//         Route::delete('/admin-delete', [ApiController::class, 'delete'])->name('api.admin.delete');
-//     });
+// izmena zab loz
+Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
+//Route::post('reset-password', [AuthController::class, 'forgotPassword']); //
+Route::post('reset-password', [AuthController::class, 'resetPassword']);
 
-//     Route::middleware(['role:auth_user'])->group(function () {
-//         Route::post('/purchase-tickets', [ApiController::class, 'purchaseTickets'])->name('api.purchase.tickets');
-//         Route::post('/reserve-tickets', [ApiController::class, 'reserveTickets'])->name('api.reserve.tickets');
-//     });
-// });
 
-// Route::get('/guest-view', [ApiController::class, 'guestView'])->name('api.guest.view');
+// resetovanje loz
+// Route::get('password/reset/{token}', function ($token) {
+//     return view('auth.reset-password', ['token' => $token]);
+// })->name('password.reset');
 
-// // Rute za autentifikaciju
-// Route::post('/login', [AuthController::class, 'login']);
-// Route::post('/register', [AuthController::class, 'register']);
+Route::get('password/reset/{token}', [AuthController::class, 'showResetForm'])->name('password.reset');
+Route::post('password/reset', [AuthController::class, 'resetPassword']);
+
+
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::middleware(['role:admin'])->group(function () {
+        Route::post('/admin-create', [ApiController::class, 'create'])->name('api.admin.create');
+        Route::put('/admin-update', [ApiController::class, 'update'])->name('api.admin.update');
+        Route::delete('/admin-delete', [ApiController::class, 'delete'])->name('api.admin.delete');
+    });
+
+    Route::middleware(['role:auth_user'])->group(function () {
+        Route::post('/purchase-tickets', [ApiController::class, 'purchaseTickets'])->name('api.purchase.tickets');
+        Route::post('/reserve-tickets', [ApiController::class, 'reserveTickets'])->name('api.reserve.tickets');
+    });
+});
+
+Route::get('/guest-view', [ApiController::class, 'guestView'])->name('api.guest.view');
+
+// Rute za autentifikaciju
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
+
+
+*/
+
+

@@ -10,6 +10,7 @@ class Korisnik extends Authenticatable
 {
     use HasFactory, HasApiTokens;
 
+
     protected $fillable = [
         'ime',
         'email',
@@ -19,7 +20,8 @@ class Korisnik extends Authenticatable
     ];
 
     protected $hidden = [
-        'lozinka'
+        'lozinka',
+        'remember_token',
     ];
 
     // Mutator to hash password before saving to the database
