@@ -44,4 +44,31 @@ class Dogadjaj extends Model
         ];
     }
 
+    // Scope za pretragu po nazivu događaja
+    public function scopeNaziv($query, $naziv)
+    {
+        if ($naziv) {
+            return $query->where('ime_dogadjaja', 'LIKE', "%$naziv%");
+        }
+        return $query;
+    }
+
+    // Scope za pretragu po lokaciji
+    public function scopeLokacija($query, $lokacija)
+    {
+        if ($lokacija) {
+            return $query->where('lokacija', 'LIKE', "%$lokacija%");
+        }
+        return $query;
+    }
+
+    // Scope za pretragu po statusu
+    public function scopeStatus($query, $status)
+    {
+        if ($status) {
+            return $query->where('status', $status);
+        }
+        return $query;
+    }
+
 }

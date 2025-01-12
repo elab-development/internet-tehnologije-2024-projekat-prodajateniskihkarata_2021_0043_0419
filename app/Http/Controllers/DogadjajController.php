@@ -192,4 +192,22 @@ class DogadjajController extends Controller
             'Content-Disposition' => 'attachment; filename="dogadjaji.csv"',
         ]);
     }
+
+
+        // FILTER CAJ
+    public function pretraga(Request $request)
+    {
+        $naziv = $request->input('naziv');
+        $lokacija = $request->input('lokacija');
+        $status = $request->input('status');
+
+        // Koristi query scopes za pretragu
+        $dogadjaji = Dogadjaj::query()
+            ->naziv($naziv)
+            ->lokacija($lokacija)
+            ->status($status)
+            ->get();
+
+        return view('dogadjaji.pretraga', compact('dogadjaji', 'naziv', 'lokacija', 'status'));
+    }
 }

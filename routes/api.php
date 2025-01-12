@@ -84,6 +84,16 @@ Route::delete('clear-cache', function () {
 });
 
 
+//filter
+Route::get('/dogadjaji/pretraga', [DogadjajController::class, 'pretraga'])->name('api.dogadjaji.pretraga');
+
+
+
+
+
+
+
+
 // STARE, RAZBACANE I DUPLIRANE RUTE
 /*
 Route::get('/user', function (Request $request) {
