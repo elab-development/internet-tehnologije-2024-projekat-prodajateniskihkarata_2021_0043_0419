@@ -79,21 +79,41 @@ class ApiController extends Controller
     // Dodatne metode za manipulaciju kartama, korisnicima, plaćanjima itd.
     // Primer metode za kreiranje karte
     public function createKarta(Request $request)
-    {
-        // Validacija i čuvanje u bazi podataka
+{
+    try {
+        // Validacija ulaznih podataka
         $data = $request->validate([
             'korisnik_id' => 'required|exists:korisniks,id',
             'dogadjaj_id' => 'required|exists:dogadjajs,id',
             'tip_karte_id' => 'required|exists:tip_kartes,id',
             'status_karte' => 'required|string',
-            'qr_kod' => 'required|string',
+            'qr_kod' => 'required|string|unique:kartas,qr_kod',
         ]);
 
-        // Kreiranje karte
+        // Kreiranje nove karte
         $karta = Karta::create($data);
 
-        return response()->json(['message' => 'Karta je uspešno kreirana', 'karta' => $karta], 201);
+        // Vraćanje uspešnog odgovora
+        return response()->json([
+            'message' => 'Karta je uspešno kreirana',
+            'karta' => $karta,
+        ], 201);
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        // Vraćanje odgovora za validacione greške
+        return response()->json([
+            'message' => 'Validacija nije prošla',
+            'errors' => $e->errors(),
+        ], 422);
+    } catch (\Exception $e) {
+        // Vraćanje odgovora za ostale greške
+        return response()->json([
+            'message' => 'Došlo je do neočekivane greške',
+            'error' => $e->getMessage(),
+        ], 500);
     }
+}
+
 
     // Primer metode za prikazivanje korisnika
     public function showKorisnik($id)

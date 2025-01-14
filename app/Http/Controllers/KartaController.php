@@ -46,7 +46,8 @@ class KartaController extends Controller
     // }
 
     public function store(Request $request)
-    {
+{
+    try {
         // Logovanje dolaznog zahteva
         Log::info('Primljen POST zahtev za kreiranje karte', $request->all());
 
@@ -56,7 +57,7 @@ class KartaController extends Controller
             'dogadjaj_id' => 'required|exists:dogadjajs,id',
             'tip_karte_id' => 'required|exists:tip_kartes,id',
             'status_karte' => 'required|string|in:validna,proverena,nevalidna',
-            'qr_kod' => 'required|string|max:255|unique:kartas,qr_kod'
+            'qr_kod' => 'required|string|max:255|unique:kartas,qr_kod',
         ]);
 
         // Logovanje validiranih podataka
@@ -68,9 +69,30 @@ class KartaController extends Controller
         // Logovanje kreirane karte
         Log::info('Kreirana karta', $karta->toArray());
 
-        // Vraćanje odgovora
-        return response()->json($karta, 201);
+        // Vraćanje uspešnog odgovora
+        return response()->json([
+            'message' => 'Karta je uspešno kreirana',
+            'karta' => $karta,
+        ], 201);
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        // Obrada validacionih grešaka
+        return response()->json([
+            'message' => 'Validacija nije prošla',
+            'errors' => $e->errors(),
+        ], 422);
+    } catch (\Exception $e) {
+        // Obrada neočekivanih grešaka
+        Log::error('Greška pri kreiranju karte: ' . $e->getMessage(), [
+            'trace' => $e->getTraceAsString()
+        ]);
+
+        return response()->json([
+            'message' => 'Došlo je do neočekivane greške',
+            'error' => $e->getMessage(),
+        ], 500);
     }
+}
+
     /**
      * Display the specified resource.
      */

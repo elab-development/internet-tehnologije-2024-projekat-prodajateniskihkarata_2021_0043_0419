@@ -87,9 +87,10 @@ class DogadjajController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        // Validate the request data
+    public function store(Request $request) 
+{
+    try {
+        // Validacija ulaznih podataka
         $validatedData = $request->validate([
             'ime_dogadjaja' => 'required|string|max:255',
             'lokacija' => 'required|string|max:255',
@@ -98,12 +99,30 @@ class DogadjajController extends Controller
             'datum_registracije' => 'required|date_format:Y-m-d'
         ]);
 
-        // Create a new Dogadjaj
+        // Kreiranje novog Dogadjaja
         $dogadjaj = Dogadjaj::create($validatedData);
 
-        // Return the created Dogadjaj with a 201 status code
-        return response()->json($dogadjaj, 201);
+        // Vraćanje uspešnog odgovora sa statusnim kodom 201
+        return response()->json([
+            'message' => 'Događaj je uspešno kreiran',
+            'dogadjaj' => $dogadjaj
+        ], 201);
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        // Obrada validacionih grešaka
+        return response()->json([
+            'message' => 'Validacija nije prošla',
+            'errors' => $e->errors(),
+        ], 422);
+    } catch (\Exception $e) {
+        // Obrada neočekivanih grešaka
+        return response()->json([
+            'message' => 'Došlo je do neočekivane greške',
+            'error' => $e->getMessage(),
+        ], 500);
     }
+}
+
 
     /**
      * Display the specified resource.
