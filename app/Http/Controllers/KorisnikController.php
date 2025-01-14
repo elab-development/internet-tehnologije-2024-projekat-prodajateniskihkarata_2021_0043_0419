@@ -53,7 +53,8 @@ class KorisnikController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
+{
+    try {
         // Validacija podataka iz zahteva
         $validatedData = $request->validate([
             'ime' => 'required|string|max:255',
@@ -70,8 +71,29 @@ class KorisnikController extends Controller
         Cache::forget('korisnici');
 
         // Vraćanje novokreiranog korisnika sa status kodom 201
-        return response()->json($korisnik, 201);
+        return response()->json([
+            'message' => 'Korisnik je uspešno kreiran',
+            'korisnik' => $korisnik,
+        ], 201);
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        // Obrada validacionih grešaka
+        return response()->json([
+            'message' => 'Validacija nije prošla',
+            'errors' => $e->errors(),
+        ], 422);
+    } catch (\Exception $e) {
+        // Obrada neočekivanih grešaka
+        Log::error('Greška pri kreiranju korisnika: ' . $e->getMessage(), [
+            'trace' => $e->getTraceAsString()
+        ]);
+
+        return response()->json([
+            'message' => 'Došlo je do neočekivane greške',
+            'error' => $e->getMessage(),
+        ], 500);
     }
+}
+
 
     /**
      * Display the specified resource.

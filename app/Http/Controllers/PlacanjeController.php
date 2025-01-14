@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Placanje;
+use Illuminate\Support\Facades\Log;
 
 class PlacanjeController extends Controller
 {
@@ -27,7 +28,8 @@ class PlacanjeController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
+{
+    try {
         // Validacija podataka iz zahteva
         $validatedData = $request->validate([
             'korisnik_id' => 'required|exists:korisniks,id',
@@ -41,8 +43,29 @@ class PlacanjeController extends Controller
         $placanje = Placanje::create($validatedData);
 
         // Vraćanje novokreiranog plaćanja sa status kodom 201
-        return response()->json($placanje, 201);
+        return response()->json([
+            'message' => 'Plaćanje je uspešno kreirano',
+            'placanje' => $placanje,
+        ], 201);
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        // Obrada validacionih grešaka
+        return response()->json([
+            'message' => 'Validacija nije prošla',
+            'errors' => $e->errors(),
+        ], 422);
+    } catch (\Exception $e) {
+        // Obrada neočekivanih grešaka
+        Log::error('Greška pri kreiranju plaćanja: ' . $e->getMessage(), [
+            'trace' => $e->getTraceAsString()
+        ]);
+
+        return response()->json([
+            'message' => 'Došlo je do neočekivane greške',
+            'error' => $e->getMessage(),
+        ], 500);
     }
+}
+
     /**
      * Display the specified resource.
      */

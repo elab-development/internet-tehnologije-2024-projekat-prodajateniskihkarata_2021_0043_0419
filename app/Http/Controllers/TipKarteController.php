@@ -28,22 +28,28 @@ class TipKarteController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        // Validacija podataka iz zahteva
-        $validatedData = $request->validate([
-            'ime_tipa_karte' => 'required|string|max:255',
-            'cena' => 'required|numeric',
-            'opis_benefita' => 'required|string',
-            'broj_benefita' => 'required|integer',
-            'dogadjaj_id' => 'required|exists:dogadjajs,id'
-        ]);
+{
+    // Validacija podataka iz zahteva
+    $validatedData = $request->validate([
+        'ime_tipa_karte' => 'required|string|max:255',
+        'cena' => 'required|numeric',
+        'opis_benefita' => 'required|string',
+        'broj_benefita' => 'required|integer',
+        'dogadjaj_id' => 'required|exists:dogadjajs,id'
+    ]);
 
-        // Kreiranje novog tipa karte
+    // Kreiranje novog tipa karte
+    try {
         $tipKarte = TipKarte::create($validatedData);
-
+        
         // Vraćanje odgovora
         return response()->json($tipKarte, 201);
+    } catch (\Exception $e) {
+        // Vraćanje odgovora u slučaju greške
+        return response()->json(['error' => 'Doslo je do greske', 'message' => $e->getMessage()], 500);
     }
+}
+
     /**
      * Display the specified resource.
      */
