@@ -117,7 +117,7 @@ class WeatherController extends Controller
         // Generisanje podataka za svaki sat tokom dana
         $currentTime = Carbon::now();
         $startTime = $currentTime->format('Y-m-d H:00:00'); // Početak od trenutnog sata
-        $endTime = $currentTime->copy()->endOfDay(); // Do kraja dana
+        $endTime = $currentTime->copy()->addHours(15);    //->endOfDay(); // Do kraja dana
 
         $processedForecastData = [];
         for ($time = Carbon::parse($startTime); $time->lessThanOrEqualTo($endTime); $time->addHour()) {
@@ -147,7 +147,17 @@ class WeatherController extends Controller
                         'rain_probability' => rand(0, 100), // Generisanje slučajne verovatnoće za interpolaciju
                         'rain_intensity' => 'Moderate' // Intenzitet padavina za interpolaciju
                     ];
-                }
+                 } 
+                //else {
+                //     // Ako nema ni prethodne ni sledeće tačke, dodajemo generičke podatke
+                //     $processedForecastData[] = [
+                //         'date' => $formattedTime,
+                //         'temperature' => 0,
+                //         'description' => 'No data available',
+                //         'rain_probability' => 0,
+                //         'rain_intensity' => 'None'
+                //     ];
+                // }
             }
         }
 

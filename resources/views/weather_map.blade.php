@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,9 +14,11 @@
             height: 500px;
             width: 100%;
         }
+
         .weather-info {
             margin-top: 20px;
         }
+
         .forecast-container {
             display: flex;
             overflow-x: auto;
@@ -23,36 +26,44 @@
             gap: 15px;
             scrollbar-width: thin;
         }
+
         .forecast-container::-webkit-scrollbar {
             height: 8px;
         }
+
         .forecast-container::-webkit-scrollbar-thumb {
             background-color: #ccc;
             border-radius: 4px;
         }
+
         .forecast-container::-webkit-scrollbar-track {
             background-color: #f0f0f0;
         }
+
         .forecast-card {
-            flex: 0 0 25%; /* Prikaz samo 4 kartice u jednom trenutku */
+            flex: 0 0 25%;
+            /* Prikaz samo 4 kartice u jednom trenutku */
             max-width: 25%;
             min-width: 200px;
         }
+
         .forecast-card .card {
             border: 1px solid #ddd;
             border-radius: 8px;
             text-align: center;
         }
+
         .forecast-card h5 {
             font-size: 1rem;
             margin-bottom: 10px;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1 class="text-center my-4">Weather and Map</h1>
-        
+
         <!-- Map div -->
         <div id="map"></div>
 
@@ -69,6 +80,7 @@
                 <strong>Rain Intensity:</strong> {{ $weatherData['rain_intensity'] }} <!-- Npr. slabe, umerene, jake -->
             </div>
             <div><strong>Live Time:</strong> <span id="live-time"></span></div>
+            <div><strong>Live Date:</strong> <span id="live-date"></span></div>
 
             <h2 class="mt-4">Hourly Weather Forecast</h2>
             <div class="forecast-container">
@@ -80,7 +92,8 @@
                                 <p class="card-text">
                                     <strong>Temp:</strong> {{ $forecast['temperature'] }} °C<br>
                                     <strong>Desc:</strong> {{ $forecast['description'] }}<br>
-                                    <strong>Rain:</strong> {{ $forecast['rain_probability'] }}% ({{ $forecast['rain_intensity'] }})
+                                    <strong>Rain:</strong> {{ $forecast['rain_probability'] }}%
+                                    ({{ $forecast['rain_intensity'] }})
                                     <!-- Padavine u prognozi -->
                                 </p>
                             </div>
@@ -113,10 +126,14 @@
             var hours = now.getHours().toString().padStart(2, '0');
             var minutes = now.getMinutes().toString().padStart(2, '0');
             var seconds = now.getSeconds().toString().padStart(2, '0');
+            var date = now.toLocaleDateString(); // Formatiran datum
+
             document.getElementById('live-time').innerHTML = hours + ':' + minutes + ':' + seconds;
+            document.getElementById('live-date').innerHTML = date; // Dodavanje datuma
         }
         setInterval(updateTime, 1000);
         updateTime();
     </script>
 </body>
+
 </html>

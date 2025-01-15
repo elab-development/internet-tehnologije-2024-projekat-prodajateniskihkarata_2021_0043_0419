@@ -8,21 +8,24 @@ class FileController extends Controller
 {
     public function upload(Request $request)
     {
+        // Validacija fajla (tip, veličina)
         $request->validate([
             'file' => 'required|file|mimes:jpg,png,pdf,docx|max:2048',
         ]);
 
-        $path = $request->file('file')->store('uploads');
+        // Smeštanje fajla u 'uploads' direktorijum u storage
+        $path = $request->file('file')->store('uploads', 'public'); // 'public' disk
 
+        // Vraćanje odgovora sa putanjom fajla
         return response()->json(['path' => $path]);
     }
 
     /**
-     * Prikaz forme za upload fajlova (ako je potrebno).
+     * Prikaz forme za upload fajlova.
      */
     public function create()
     {
-        return view('upload.create');
+        return view('upload.create'); // Blade fajl za formu
     }
 
     /**
@@ -35,12 +38,21 @@ class FileController extends Controller
             'file' => 'required|mimes:jpg,jpeg,png,pdf|max:2048',
         ]);
 
-        // Čuvanje fajla u 'public' disk (public/storage)
+        // Provera da li je fajl validan
         if ($request->file('file')->isValid()) {
+            // Čuvanje fajla u 'public' disk (public/storage)
             $path = $request->file('file')->store('uploads', 'public');
-            return response()->json(['message' => 'File uploaded successfully', 'path' => $path], 201);
+
+            // Vraćanje odgovora sa putanjom fajla
+            return response()->json([
+                'message' => 'File uploaded successfully',
+                'path' => $path,
+            ], 201); // Status 201 označava uspešan upload
         }
 
-        return response()->json(['error' => 'Failed to upload file'], 500);
+        // Ako fajl nije validan
+        return response()->json([
+            'error' => 'Failed to upload file',
+        ], 500); // Status 500 označava grešku servera
     }
 }

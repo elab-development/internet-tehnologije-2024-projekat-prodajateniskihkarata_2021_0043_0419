@@ -17,6 +17,41 @@ use App\Http\Controllers\ApiController;
 use Illuminate\Support\Facades\Cache;
 
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/dogadjaji', [DogadjajController::class, 'store']);
+    Route::put('/dogadjaji/{id}', [DogadjajController::class, 'update']);
+    Route::delete('/dogadjaji/{id}', [DogadjajController::class, 'destroy']);
+    Route::get('/dogadjaji/{id}', [DogadjajController::class, 'show']);
+    Route::get('/dogadjaji', [DogadjajController::class, 'index']);
+});
+Route::get('/login', function () {
+    return response()->json(['error' => 'Morate biti prijavljeni za pristup.'], 401);
+})->name('login');
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::resource('karte', KartaController::class)->except(['index', 'show']);
+});
+
+// Otvorene rute
+Route::get('karte', [KartaController::class, 'index']);
+Route::get('karte/{id}', [KartaController::class, 'show']);
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('korisnici/{korisnik}/promena-lozinke', [KorisnikController::class, 'promeniLozinku']);
+});
+
+//
+Route::get('/dogadjaji/pretraga', [DogadjajController::class, 'pretraga'])->name('api.dogadjaji.pretraga');
+Route::get('/dogadjaji/pretraga', [DogadjajController::class, 'filter']);
+
+
+
+
+
+
+
 // Rute za autentifikaciju
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
@@ -31,8 +66,12 @@ Route::get('/guest-view-dogadjaji', [ApiController::class, 'indexDogadjaji'])->n
 Route::get('/guest-view', [ApiController::class, 'guestView'])->name('api.guest.view');
 
 // Rute za paginaciju i filtriranje događaja (dostupne svima)
-Route::get('dogadjaji', [DogadjajController::class, 'index']);
-Route::get('dogadjaji/filter', [DogadjajController::class, 'filter']);
+// Route::get('dogadjaji', [DogadjajController::class, 'index']);
+// Route::get('dogadjaji/filter', [DogadjajController::class, 'filter']);
+
+// Rute za paginaciju i filtriranje događaja (koje zahtevaju autentifikaciju)
+Route::middleware('auth:api')->get('dogadjaji', [DogadjajController::class, 'index']);
+Route::middleware('auth:api')->get('dogadjaji/filter', [DogadjajController::class, 'filter']);
 
 // Rute zaštićene middleware-om 'auth:sanctum'
 Route::middleware('auth:sanctum')->group(function () {
@@ -75,9 +114,6 @@ Route::get('upload-fajlova', [FileController::class, 'create'])->name('upload.cr
 // Ruta za čuvanje uploadovanih fajlova
 Route::post('upload-fajlova', [FileController::class, 'store'])->name('upload.store');
 
-Route::get('upload', [FileController::class, 'create'])->name('upload.create');
-Route::post('upload', [FileController::class, 'store'])->name('upload.store');
-
 Route::delete('clear-cache', function () {
     Cache::forget('korisnici');
     return response()->json(['message' => 'Cache cleared'], 200);
@@ -89,6 +125,10 @@ Route::get('/dogadjaji/pretraga', [DogadjajController::class, 'pretraga'])->name
 
 
 
+// Route::middleware('auth:sanctum')->group(function () {
+//     Route::get('/dogadjaji', [DogadjajController::class, 'index']);
+//     Route::get('/dogadjaji/filter', [DogadjajController::class, 'filter']);
+// });
 
 
 
@@ -193,5 +233,3 @@ Route::post('/register', [AuthController::class, 'register']);
 
 
 */
-
-

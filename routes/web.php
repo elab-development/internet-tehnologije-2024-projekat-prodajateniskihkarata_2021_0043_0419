@@ -59,3 +59,13 @@ Route::get('/map', function () {
 
 //VREME I MAPA
 Route::get('/weather-map', [WeatherController::class, 'getWeatherAndMap'])->name('weather.map');
+
+
+// Rute za paginaciju i filtriranje događaja (dostupne svima)
+//Route::get('dogadjaji', [DogadjajController::class, 'index']);
+//Route::get('dogadjaji/filter', [DogadjajController::class, 'filter']);
+
+
+
+// Route::get('upload/create', [FileController::class, 'create'])->name('upload.create');
+// Route::post('upload', [FileController::class, 'store'])->name('upload.store');

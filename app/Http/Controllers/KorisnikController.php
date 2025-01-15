@@ -49,51 +49,78 @@ class KorisnikController extends Controller
         //
     }
 
+    public function store(Request $request)
+    {
+        try {
+            // Validacija podataka iz zahteva
+            $validatedData = $request->validate([
+                'ime' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:korisniks',
+                'lozinka' => 'required|string|min:8',
+                'uloga' => 'required|string|in:admin,auth_user,guest',
+                'datum_registracije' => 'required|date_format:Y-m-d H:i:s'
+            ]);
+
+            // Kreiranje novog korisnika
+            $korisnik = Korisnik::create($validatedData);
+
+            // Uklanjanje keša za listu korisnika
+            Cache::forget('korisnici');
+
+            // Vraćanje novokreiranog korisnika sa status kodom 201
+            return response()->json([
+                'message' => 'Korisnik je uspešno kreiran',
+                'korisnik' => $korisnik,
+            ], 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Obrada validacionih grešaka
+            return response()->json([
+                'message' => 'Validacija nije prošla',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            // Obrada neočekivanih grešaka
+            Log::error('Greška pri kreiranju korisnika: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'message' => 'Došlo je do neočekivane greške',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-{
-    try {
-        // Validacija podataka iz zahteva
-        $validatedData = $request->validate([
-            'ime' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:korisniks',
-            'lozinka' => 'required|string|min:8',
-            'uloga' => 'required|string|in:admin,auth_user,guest',
-            'datum_registracije' => 'required|date_format:Y-m-d H:i:s'
-        ]);
 
-        // Kreiranje novog korisnika
-        $korisnik = Korisnik::create($validatedData);
 
-        // Uklanjanje keša za listu korisnika
-        Cache::forget('korisnici');
+//sr
+    // public function store(Request $request)
+    // {
+    //     try {
+    //         // Validacija podataka iz zahteva
+    //         $validatedData = $request->validate([
+    //             'ime' => 'required|string|max:255',
+    //             'email' => 'required|string|email|max:255|unique:korisniks',
+    //             'lozinka' => 'required|string|min:8',
+    //             'uloga' => 'required|string|in:admin,auth_user,guest',
+    //             'datum_registracije' => 'required|date_format:Y-m-d H:i:s'
+    //         ]);
 
-        // Vraćanje novokreiranog korisnika sa status kodom 201
-        return response()->json([
-            'message' => 'Korisnik je uspešno kreiran',
-            'korisnik' => $korisnik,
-        ], 201);
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        // Obrada validacionih grešaka
-        return response()->json([
-            'message' => 'Validacija nije prošla',
-            'errors' => $e->errors(),
-        ], 422);
-    } catch (\Exception $e) {
-        // Obrada neočekivanih grešaka
-        Log::error('Greška pri kreiranju korisnika: ' . $e->getMessage(), [
-            'trace' => $e->getTraceAsString()
-        ]);
+    //         // Kreiranje novog korisnika
+    //         $korisnik = Korisnik::create($validatedData);
 
-        return response()->json([
-            'message' => 'Došlo je do neočekivane greške',
-            'error' => $e->getMessage(),
-        ], 500);
-    }
-}
+    //         // Uklanjanje keša za listu korisnika
+    //         Cache::forget('korisnici');
 
+    //         // Vraćanje novokreiranog korisnika sa status kodom 201
+    //         return response()->json($korisnik, 201);
+    //     } catch (\Exception $e) {
+    //         Log::error('Greška prilikom kreiranja korisnika: ' . $e->getMessage());
+    //         return response()->json(['error' => 'Greška prilikom kreiranja korisnika.'], 500);
+    //     }
+    // }
 
     /**
      * Display the specified resource.
@@ -167,18 +194,33 @@ class KorisnikController extends Controller
 
     public function promeniLozinku(Request $request, Korisnik $korisnik)
     {
-        $request->validate([
-            'stara_lozinka' => 'required',
-            'nova_lozinka' => 'required|min:8',
-        ]);
+        try {
+            Log::info('Započeo proces promene lozinke.');
 
-        if (!Hash::check($request->stara_lozinka, $korisnik->lozinka)) {
-            return response()->json(['error' => 'Stara lozinka nije ispravna'], 400);
+            $request->validate([
+                'stara_lozinka' => 'required',
+                'nova_lozinka' => 'required|min:8',
+            ]);
+
+            Log::info('Validacija prodata.');
+
+            // Provera stara lozinka
+            if (!Hash::check($request->stara_lozinka, $korisnik->lozinka)) {
+                Log::error('Stara lozinka nije ispravna.');
+                return response()->json(['error' => 'Stara lozinka nije ispravna.'], 400);
+            }
+
+            // Promena lozinke
+            $korisnik->lozinka = Hash::make($request->nova_lozinka);
+            $korisnik->save();
+
+            Log::info('Lozinka uspešno promenjena.');
+
+            return response()->json(['message' => 'Lozinka je uspešno promenjena.'], 200);
+        } catch (\Exception $e) {
+            Log::error('Greška prilikom promene lozinke: ' . $e->getMessage());
+            return response()->json(['error' => 'Došlo je do greške prilikom promene lozinke.'], 500);
         }
-
-        $korisnik->lozinka = Hash::make($request->nova_lozinka);
-        $korisnik->save();
-
-        return response()->json(['message' => 'Lozinka je uspešno promenjena']);
     }
+
 }

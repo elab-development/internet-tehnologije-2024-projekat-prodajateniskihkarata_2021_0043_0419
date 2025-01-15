@@ -7,6 +7,7 @@ use App\Models\Dogadjaj;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Log;
 
 class DogadjajController extends Controller
 {
@@ -47,34 +48,107 @@ class DogadjajController extends Controller
     //     return response()->json($dogadjaji);
     // }
 
+    // Metoda za paginaciju i filtriranje događaja
+    // public function index(Request $request)
+    // {
+    //     $query = Dogadjaj::query();
+
+    //     // Filtriranje po nazivu
+    //     if ($request->has('ime_dogadjaja')) {
+    //         $query->where('ime_dogadjaja', 'like', '%' . $request->input('ime_dogadjaja') . '%');
+    //     }
+
+    //     // Filtriranje po datumu
+    //     if ($request->has('datum')) {
+    //         $query->whereDate('datum_registracije', $request->input('datum'));
+    //     }
+
+    //     // Paginacija
+    //     $dogadjaji = $query->paginate($request->input('per_page', 10));
+
+    //     return response()->json($dogadjaji);
+    // }
+
+    // Paginacija i filtriranje događaja
+    //  public function index(Request $request)
+    //  {
+    //      try {
+    //          $query = Dogadjaj::query();
+
+    //          // Filtriranje po nazivu
+    //          if ($request->has('ime_dogadjaja')) {
+    //              $query->where('ime_dogadjaja', 'like', '%' . $request->input('ime_dogadjaja') . '%');
+    //          }
+
+    //          // Filtriranje po datumu
+    //          if ($request->has('datum')) {
+    //              $query->whereDate('datum_registracije', $request->input('datum'));
+    //          }
+
+    //          // Sortiranje (opciono)
+    //          if ($request->has('sort_by')) {
+    //              $sortBy = $request->input('sort_by');
+    //              $sortOrder = $request->input('sort_order', 'asc'); // Uzlazno sortiranje kao podrazumevano
+    //              $query->orderBy($sortBy, $sortOrder);
+    //          }
+
+    //          // Paginacija
+    //          $dogadjaji = $query->paginate(10);
+
+    //          return response()->json([
+    //              'success' => true,
+    //              'data' => $dogadjaji,
+    //              'message' => 'Događaji uspešno dobijeni.',
+    //          ]);
+
+    //      } catch (\Exception $e) {
+    //          return response()->json([
+    //              'success' => false,
+    //              'message' => 'Došlo je do greške: ' . $e->getMessage(),
+    //          ], 500);
+    //      }
+    //  }
+
+    // Metoda za paginaciju događaja
+    public function index(Request $request)
+    {
+        try {
+            // Dohvatanje događaja sa paginacijom
+            $dogadjaji = Dogadjaj::paginate(10);
+            return response()->json($dogadjaji);
+        } catch (\Exception $e) {
+            // Logovanje greške
+            Log::error('Greška u index metodi: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+
+            // Hvatanje greške
+            return response()->json(['error' => 'Došlo je do greške: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function filter(Request $request)
+{
+    try {
+        $query = Dogadjaj::query();
+
+        if ($request->has('ime_dogadjaja')) {
+            $query->where('ime_dogadjaja', 'like', '%' . $request->input('ime_dogadjaja') . '%');
+        }
+
+        if ($request->has('datum')) {
+            $query->whereDate('datum_registracije', $request->input('datum'));
+        }
+
+        $dogadjaji = $query->paginate(10);
+        return response()->json($dogadjaji); // Ovo forsira JSON odgovor
+    } catch (\Exception $e) {
+        Log::error('Greška u filter metodi: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+        return response()->json(['error' => 'Došlo je do greške: ' . $e->getMessage()], 500);
+    }
+}
+
+    
 
 
-     // Metoda za paginaciju događaja
-     public function index(Request $request)
-     {
-         // Dohvatanje događaja sa paginacijom
-         $dogadjaji = Dogadjaj::paginate(10);
-         return response()->json($dogadjaji);
-     }
- 
-     // Metoda za filtriranje događaja
-     public function filter(Request $request)
-     {
-         $query = Dogadjaj::query();
- 
-         // Filtriranje po nazivu
-         if ($request->has('ime_dogadjaja')) {
-             $query->where('ime_dogadjaja', 'like', '%' . $request->input('ime_dogadjaja') . '%');
-         }
- 
-         // Filtriranje po datumu
-         if ($request->has('datum')) {
-             $query->whereDate('datum_registracije', $request->input('datum'));
-         }
- 
-         $dogadjaji = $query->paginate(10);
-         return response()->json($dogadjaji);
-     }
 
     /**
      * Show the form for creating a new resource.
@@ -87,7 +161,9 @@ class DogadjajController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request) 
+
+
+     public function store(Request $request) 
 {
     try {
         // Validacija ulaznih podataka
@@ -124,6 +200,37 @@ class DogadjajController extends Controller
 }
 
 
+// sr
+    // public function store(Request $request)
+    // {
+    //     try {
+    //         // Validacija podataka
+    //         $validatedData = $request->validate([
+    //             'ime_dogadjaja' => 'required|string|max:255',
+    //             'lokacija' => 'required|string|max:255',
+    //             'opis' => 'nullable|string',
+    //             'status' => 'required|string|in:zakazan,odrzan,otkazan',
+    //             'datum_registracije' => 'required|date_format:Y-m-d'
+    //         ]);
+
+    //         // Kreiranje događaja
+    //         $dogadjaj = Dogadjaj::create($validatedData);
+
+    //         // Povratni JSON odgovor
+    //         return response()->json([
+    //             'message' => 'Događaj je uspešno kreiran',
+    //             'dogadjaj' => $dogadjaj
+    //         ], 201);
+    //     } catch (\Exception $e) {
+    //         // Logovanje greške
+    //         Log::error('Greška pri kreiranju događaja: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+
+    //         // Povratni JSON odgovor u slučaju greške
+    //         return response()->json(['error' => 'Došlo je do greške pri kreiranju događaja'], 500);
+    //     }
+    // }
+
+
     /**
      * Display the specified resource.
      */
@@ -152,25 +259,36 @@ class DogadjajController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Validacija podataka iz zahteva
-        $validatedData = $request->validate([
-            'ime_dogadjaja' => 'required|string|max:255',
-            'lokacija' => 'required|string|max:255',
-            'opis' => 'nullable|string',
-            'status' => 'required|string|in:zakazan,otkazan,odrzan',
-            'datum_registracije' => 'required|date_format:Y-m-d'
-        ]);
+        try {
+            // Validacija podataka
+            $validatedData = $request->validate([
+                'ime_dogadjaja' => 'required|string|max:255',
+                'lokacija' => 'required|string|max:255',
+                'opis' => 'nullable|string',
+                'status' => 'required|string|in:zakazan,odrzan,otkazan',
+                'datum_registracije' => 'required|date_format:Y-m-d'
+            ]);
 
-        // Pronalazak događaja po ID-ju
-        $dogadjaj = Dogadjaj::find($id);
+            // Pronalazak događaja
+            $dogadjaj = Dogadjaj::find($id);
 
-        if (!$dogadjaj) {
-            return response()->json(['error' => 'Događaj nije pronađen'], 404);
+            if (!$dogadjaj) {
+                return response()->json(['error' => 'Događaj nije pronađen'], 404);
+            }
+
+            // Ažuriranje događaja
+            $dogadjaj->update($validatedData);
+
+            return response()->json([
+                'message' => 'Događaj je uspešno ažuriran',
+                'dogadjaj' => $dogadjaj
+            ], 200);
+        } catch (\Exception $e) {
+            // Logovanje greške
+            Log::error('Greška pri ažuriranju događaja: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+
+            return response()->json(['error' => 'Došlo je do greške pri ažuriranju događaja'], 500);
         }
-
-        // Ažuriranje događaja
-        $dogadjaj->update($validatedData);
-        return response()->json($dogadjaj, 200);
     }
 
     /**
@@ -178,15 +296,24 @@ class DogadjajController extends Controller
      */
     public function destroy(string $id)
     {
-        $dogadjaj = Dogadjaj::find($id);
+        try {
+            $dogadjaj = Dogadjaj::find($id);
 
-        if (!$dogadjaj) {
-            return response()->json(['error' => 'Događaj nije pronađen'], 404);
+            if (!$dogadjaj) {
+                return response()->json(['error' => 'Događaj nije pronađen'], 404);
+            }
+
+            $dogadjaj->delete();
+
+            return response()->json(['message' => 'Događaj je uspešno obrisan'], 200);
+        } catch (\Exception $e) {
+            // Logovanje greške
+            Log::error('Greška pri brisanju događaja: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+
+            return response()->json(['error' => 'Došlo je do greške pri brisanju događaja'], 500);
         }
-
-        $dogadjaj->delete();
-        return response()->json(null, 204);
     }
+
     public function fetchExternalData()
     {
         $response = Http::get('https://api.example.com/data');
@@ -213,7 +340,7 @@ class DogadjajController extends Controller
     }
 
 
-        // FILTER CAJ
+    // FILTER CAJ
     public function pretraga(Request $request)
     {
         $naziv = $request->input('naziv');
