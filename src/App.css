@@ -1,0 +1,232 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* General styles for the navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #333;
+  color: white;
+  width: 100%;
+  box-sizing: border-box; /* Ensure padding is included in the element's total width and height */
+  position: relative; /* Ensure dropdown is positioned relative to navbar */
+}
+
+.navbar-left, .navbar-right {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-left a, .navbar-right a {
+  color: white;
+  text-decoration: none;
+  margin: 0 10px;
+  display: none; /* Hide the links for smaller devices */
+}
+
+.hamburger {
+  display: block;
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  display: none; /* Hide the dropdown menu by default */
+  flex-direction: column;
+  background-color: #333;
+  position: absolute;
+  top: 100%; /* Position the dropdown menu immediately below the navbar */
+  right: 0; /* Align the dropdown menu to the right edge */
+  /* border: 1px solid #ccc; */
+  padding: 10px;
+  box-sizing: border-box; /* Ensure padding is included in the width calculation */
+}
+
+.dropdown-menu a {
+  color: white;
+  text-decoration: none;
+  margin: 5px 0;
+}
+
+/* Media query for larger screens */
+@media (min-width: 600px) {
+  .navbar-left a, .navbar-right a {
+    display: block; /* Show the links for larger screens */
+  }
+  .hamburger, .dropdown-menu {
+    display: none; /* Hide the hamburger menu and dropdown for larger screens */
+  }
+}
+
+/* Media query for smaller screens */
+@media (max-width: 599px) {
+  .navbar-left a, .navbar-right a {
+    display: none; /* Hide the links for smaller screens */
+  }
+  .hamburger {
+    display: block; /* Show the hamburger menu for smaller screens */
+  }
+  .dropdown-menu {
+    display: flex; /* Display the dropdown menu for smaller screens */
+    width: auto; /* Auto width to fit content */
+    right: 0; /* Align the dropdown menu to the right edge */
+    top: 100%; /* Position the dropdown menu immediately below the navbar */
+  }
+}
+
+.login-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.email-input, .password-input {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.password-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrapper input {
+  flex: 1;
+  padding-right: 40px;
+  height: 40px;
+  box-sizing: border-box;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  font-size: 18px;
+  user-select: none;
+}
+
+.login-button {
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.toggle-password:hover {
+  filter: brightness(1.2);
+}
+
+@media (max-width: 600px) {
+  .login-container {
+    padding: 15px;
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+
+  .login-form {
+    gap: 15px;
+  }
+
+  .password-input-wrapper input {
+    height: 40px;
+    font-size: 14px;
+  }
+
+  .toggle-password {
+    font-size: 16px;
+    right: 8px;
+  }
+
+  .login-button {
+    font-size: 14px;
+    padding: 8px;
+  }
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.password-strength {
+  margin-top: 10px;
+  position: relative;
+}
+
+.strength-bar {
+  height: 8px;
+  border-radius: 4px;
+  background-color: #ddd;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.strength-label {
+  display: block;
+  margin-top: 5px;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+}
