@@ -389,4 +389,10 @@ ul li {
 .submit-button:hover {
   background-color: #0056b3;
 }
+.buyTickets{
+  background-image: url("./components/slike/belgradeopen.png");
+  background-repeat: no-repeat;
+  background-attachment: fixed; 
+  background-size: 100% 100%;
 
+}
