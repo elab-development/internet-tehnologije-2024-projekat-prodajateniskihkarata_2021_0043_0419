@@ -28,6 +28,8 @@
   min-height: 100vh; /* Pruža minimalnu visinu koja pokriva ceo ekran */
   padding: 20px; /* Dodaje padding oko sadržaja */
   box-sizing: border-box; /* Uključuje padding u ukupnu širinu */
+  color: red;
+  margin-top: -40px;
 }
 
 /* Stil za svaku kartu (promeni pozadinu na svetlo plavu) */
@@ -142,4 +144,230 @@
 .page-info {
   font-size: 16px;
   font-weight: bold;
+  color: #ccc;
 }
+
+/* Stil za formu za pretragu */
+.filter-form {
+    background-color: rgba(0, 0, 0, 0.7); /* Tamna pozadina sa prozirnošću */
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  .filter-form h2{
+    color: white;
+    margin-top: 20px;
+  }
+  
+  /* Stil za label-e u formi */
+  .filter-form label {
+    color: white; /* Bela boja za tekst */
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+  }
+  
+  /* Stil za input polja */
+  .filter-form .form-control {
+    background-color: #333; /* Tamno siva pozadina */
+    color: white; /* Bela boja teksta */
+    border: 1px solid #555; /* Svetlo sivi okvir */
+    border-radius: 5px;
+    margin-bottom: 15px;
+    padding: 10px;
+  }
+  
+  .filter-form .form-control::placeholder {
+    color: #aaa; /* Svetlo siva boja za placeholder */
+  }
+  
+  /* Stil za dugme za pretragu */
+  .filter-form button {
+    background-color: #007bff;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.2s;
+  }
+  
+  .filter-form button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+  }
+  
+  /* Dodatno za input fokus */
+  .filter-form .form-control:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  /* Prazni rezultati */
+  .matches .text-center {
+    margin-top: 20px;
+    font-size: 25px;
+    color: #fff;
+  }
+  
+  .breadcrumb {
+    display: flex;
+    list-style: none;
+    padding: 10px 15px;
+    background-color: rgba(0, 0, 0, 0.7); /* Tamna pozadina */
+    border-radius: 5px;
+    color: white; /* Bela boja teksta */
+    margin-top: 38px;
+  }
+  
+  .breadcrumb-item {
+    margin-right: 10px;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .breadcrumb-item a {
+    color: #007bff; /* Plava boja za link */
+    text-decoration: none;
+  }
+  
+  .breadcrumb-item a:hover {
+    text-decoration: underline;
+  }
+  
+  .breadcrumb-item.active {
+    color: #aaa; /* Svetlija siva za aktivni element */
+    pointer-events: none;
+  }
+  
+  .match-details {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .match-details h1 {
+    font-size: 28px;
+    color: #007bff;
+  }
+  
+  .match-details p {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+/* Overlay za modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    cursor: pointer; /* Omogućava klikanje samo na overlay */
+  }
+  
+  /* Sadržaj modala */
+  .modal-content {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1001;
+    text-align: left; /* Poravnanje teksta na levo */
+  }
+  
+  /* Tekst u modalu */
+  .modal-content p {
+    margin: 10px 0; /* Prostor između redova */
+    line-height: 1.5; /* Poboljšana čitljivost */
+  }
+  
+  /* Dugme za zatvaranje */
+  .modal-content .btn-secondary {
+    margin-top: 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  /*
+  
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center; 
+    align-items: center;    
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    animation: slideDown 0.3s ease-out;
+  }
+  
+  @keyframes slideDown {
+    from {
+      transform: translateY(-30%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  .modal-content h2 {
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    color: #333;
+  }
+  
+  .modal-content p {
+    margin-bottom: 10px;
+    font-size: 1rem;
+    color: #555;
+  }
+  
+  .modal-content .btn {
+    margin-top: 20px;
+    width: 100%;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .modal-content .btn:hover {
+    background-color: #0056b3;
+  }
+  
+  
+  */
