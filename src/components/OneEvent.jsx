@@ -1,18 +1,34 @@
 import React, { useState } from "react";
+import axios from "axios";
+import "./OneEvent.css";
 
 const OneEvent = ({ dogadjaj }) => {
   const [showModal, setShowModal] = useState(false);
+  const [matchDetails, setMatchDetails] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleOpenModal = () => {
+  const handleOpenModal = async () => {
     setShowModal(true);
+    document.body.classList.add("modal-open"); // Dodajemo klasu za onemogućavanje pozadine
+    setLoading(true);
+    try {
+      const response = await axios.get(`http://localhost:8000/api/dogadjaji/${dogadjaj.id}`);
+      setMatchDetails(response.data);
+      setLoading(false);
+    } catch (err) {
+      setError("Ne možemo da pronađemo detalje o ovom meču.");
+      console.error(err);
+      setLoading(false);
+    }
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
+    document.body.classList.remove("modal-open"); // Uklanjamo klasu kada se modal zatvori
   };
 
   const handleOverlayClick = (e) => {
-    // Zatvaranje modala samo ako je klik direktno na overlay
     if (e.target.className === "modal-overlay") {
       handleCloseModal();
     }
@@ -35,15 +51,23 @@ const OneEvent = ({ dogadjaj }) => {
       {showModal && (
         <div className="modal-overlay" onClick={handleOverlayClick}>
           <div className="modal-content">
-            <h2>Detalji o meču</h2>
-            <p><strong>Naziv:</strong> {dogadjaj.ime_dogadjaja}</p>
-            <p><strong>Lokacija:</strong> {dogadjaj.lokacija}</p>
-            <p><strong>Datum:</strong> {dogadjaj.datum}</p>
-            <p><strong>Status:</strong> {dogadjaj.status}</p>
-            <p><strong>Opis:</strong> {dogadjaj.opis}</p>
-            <button onClick={handleCloseModal} className="btn btn-secondary">
-              Zatvori
-            </button>
+            {loading ? (
+              <p>Učitavanje detalja o meču...</p>
+            ) : error ? (
+              <p>{error}</p>
+            ) : (
+              <>
+                <h2>Detalji o meču</h2>
+                <p><strong>Naziv:</strong> {matchDetails.ime_dogadjaja}</p>
+                <p><strong>Lokacija:</strong> {matchDetails.lokacija}</p>
+                <p><strong>Datum:</strong> {matchDetails.datum}</p>
+                <p><strong>Status:</strong> {matchDetails.status}</p>
+                <p><strong>Opis:</strong> {matchDetails.opis}</p>
+                <button onClick={handleCloseModal} className="btn btn-secondary">
+                  Zatvori
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}
@@ -52,6 +76,8 @@ const OneEvent = ({ dogadjaj }) => {
 };
 
 export default OneEvent;
+
+
 
 
  //////////// BARIJANTA KODA KADA SE OTVARAJU DETALJI NA NOVOJ STR ///////////////

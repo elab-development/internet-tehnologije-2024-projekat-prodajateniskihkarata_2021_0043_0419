@@ -55,7 +55,7 @@ const Matches = () => {
 
   useEffect(() => {
     fetchEvents(currentPage, filters);
-  }, []);
+  }, [currentPage, filters]);
 
   return (
     <div className="matches">
@@ -139,6 +139,14 @@ const Matches = () => {
           </div>
         </div>
       )}
+
+      {/* Download buttons */}
+      <div className="download-buttons mt-4">
+        <h3 className="text-white">Preuzmite sve mečeve:</h3>
+        <a href="http://localhost:8000/eksport/pdf" className="btn btn-danger mt-2">Preuzmi PDF</a>
+        <a href="http://localhost:8000/eksport/ics" className="btn btn-success mt-2">Preuzmi ICS</a>
+        <a href="http://localhost:8000/eksport/csv" className="btn btn-warning mt-2">Preuzmi CSV</a>
+      </div>
     </div>
   );
 };

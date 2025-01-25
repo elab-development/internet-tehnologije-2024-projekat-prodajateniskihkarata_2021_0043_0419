@@ -242,8 +242,121 @@
     color: #aaa; /* Svetlija siva za aktivni element */
     pointer-events: none;
   }
+
+
+
+/* EKSPORT */
+
+
+/* ... postojeći stilovi ... */
+
+/* Stil za dugmadi za preuzimanje */
+.download-buttons {
+    /* display: flex; */
+    flex-direction: column;
+    align-items: center;
+  }
   
-  .match-details {
+  .download-buttons h3 {
+    margin-bottom: 10px;
+  }
+  
+  .download-buttons a {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 5px;
+    font-size: 16px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: white;
+    transition: background-color 0.2s, transform 0.2s;
+  }
+  
+  .download-buttons .btn-danger {
+    background-color: #dc3545;
+  }
+  
+  .download-buttons .btn-danger:hover {
+    background-color: #c82333;
+    transform: scale(1.05);
+  }
+  
+  .download-buttons .btn-success {
+    background-color: #28a745;
+  }
+  
+  .download-buttons .btn-success:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+  }
+  
+  .download-buttons .btn-warning {
+    background-color: #ffc107;
+    color: #212529;
+  }
+  
+  .download-buttons .btn-warning:hover {
+    background-color: #e0a800;
+    transform: scale(1.05);
+  }
+
+
+
+
+/* ... postojeći stilovi ... */
+
+/* Modal Styles */
+body.modal-open {
+    overflow: hidden;  /* Sprečava skrolovanje pozadine */
+  }
+  
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Tamna pozadina */
+    z-index: 9999; /* Modal treba da bude iznad svega */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modal-content {
+    position: relative;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 60%;
+    max-width: 500px;
+    z-index: 10000; /* Osiguraj da modal bude iznad pozadine */
+    pointer-events: all; /* Omogućava interakciju sa modalom */
+  }
+  
+  .modal-content h2 {
+    margin-top: 0;
+  }
+  
+  .modal-content p {
+    margin: 10px 0;
+  }
+  
+  .modal-content .btn-secondary {
+    margin-top: 20px;
+  }
+  
+  .modal-overlay,
+  .modal-content {
+    pointer-events: all; /* Omogućava interakciju sa modalom */
+  }
+  
+  body.modal-open *:not(.modal-overlay):not(.modal-content):not(.modal-content *) {
+    pointer-events: none; /* Sprečava interakciju sa pozadinom */
+  }
+
+  
+  /* .match-details {
     background-color: #f9f9f9;
     border-radius: 10px;
     padding: 20px;
@@ -263,47 +376,62 @@
     margin-bottom: 10px;
   }
   
-/* Overlay za modal */
-.modal-overlay {
+  .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.6);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    cursor: pointer; /* Omogućava klikanje samo na overlay */
+    cursor: pointer;
   }
   
-  /* Sadržaj modala */
   .modal-content {
     background: white;
     border-radius: 10px;
     padding: 20px;
     max-width: 500px;
-    width: 100%;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     position: relative;
     z-index: 1001;
-    text-align: left; /* Poravnanje teksta na levo */
+    text-align: left;
   }
   
-  /* Tekst u modalu */
+  .modal-content h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #007bff;
+  }
+  
   .modal-content p {
-    margin: 10px 0; /* Prostor između redova */
-    line-height: 1.5; /* Poboljšana čitljivost */
+    margin: 10px 0;
+    line-height: 1.5;
   }
   
-  /* Dugme za zatvaranje */
-  .modal-content .btn-secondary {
-    margin-top: 20px;
+  .modal-content button {
     display: block;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 20px auto 0;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
   }
+  
+  .modal-content button:hover {
+    background-color: #0056b3;
+  }
+
+  body.modal-open {
+    overflow: hidden;
+  } */
+  
   
   /*
   

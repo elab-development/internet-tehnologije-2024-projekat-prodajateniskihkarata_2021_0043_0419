@@ -332,6 +332,7 @@ ul li {
 }
 
 /* CONTACT STRANA*/
+/* CONTACT STRANA*/
 .contact-container {
   max-width: 600px;
   margin: 0 auto;
@@ -389,6 +390,7 @@ ul li {
 .submit-button:hover {
   background-color: #0056b3;
 }
+
 .buyTickets{
   background-image: url("./components/slike/belgradeopen.png");
   background-repeat: no-repeat;

@@ -1,0 +1,118 @@
+/* Stil za svaku kartu */
+.card {
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    margin: 20px 0;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    background-color: #f0f8ff; /* svetlo plava boja */
+  }
+  
+  /* Naslov u header-u */
+  .card-header {
+    background-color: #007bff;
+    padding: 10px;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+    color: white;
+  }
+  
+  /* Glavni sadržaj u kartici */
+  .card-body {
+    padding: 15px;
+    text-align: left;
+    color: #333;
+  }
+  
+  /* Naslovi u karticama */
+  .card-title {
+    font-size: 20px;
+    color: #007bff;
+    margin-bottom: 10px;
+  }
+  
+  /* Tekst u kartici */
+  .card-text {
+    margin: 5px 0;
+    color: #666;
+  }
+  
+  /* Footer kartice */
+  .card-footer {
+    background-color: #f9f9f9;
+    padding: 10px;
+    font-size: 12px;
+    color: #999;
+    border-top: 1px solid #ddd;
+    text-align: right;
+  }
+  
+  /* Stil za dugme */
+  .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 5px;
+    font-size: 14px;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+  }
+  
+  .btn-primary {
+    background-color: #007bff;
+    color: white;
+    border: none;
+  }
+  
+  .btn-primary:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+  }
+  
+  /* Modal Styles */
+  body.modal-open {
+    overflow: hidden;  /* Sprečava skrolovanje pozadine */
+  }
+  
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Tamna pozadina */
+    z-index: 9999; /* Modal treba da bude iznad svega */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: all; /* Omogućava interakciju sa modalom */
+  }
+  
+  .modal-content {
+    position: relative;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 60%;
+    max-width: 500px;
+    z-index: 10000; /* Osiguraj da modal bude iznad pozadine */
+    pointer-events: all; /* Omogućava interakciju sa modalom */
+    transition: none; /* Onemogućava sve animacije */
+  }
+  
+  .modal-content h2 {
+    margin-top: 0;
+  }
+  
+  .modal-content p {
+    margin: 10px 0;
+  }
+  
+  .modal-content .btn-secondary {
+    margin-top: 20px;
+  }
+  
+  body.modal-open *:not(.modal-overlay):not(.modal-content):not(.modal-content *) {
+    pointer-events: none; /* Sprečava interakciju sa pozadinom */
+  }
