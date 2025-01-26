@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom'; // Pretpostavljamo da koristite react-router-dom za navigaciju
+import axios from 'axios';
 
 const Register = () => {
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -87,13 +91,49 @@ const Register = () => {
     );
   };
 
+  const handleRegister = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post('http://localhost:8000/api/register', {
+        ime: username,
+        email: email,
+        lozinka: password,
+        lozinka_confirmation: confirmPassword
+      });
+      console.log(response.data);
+      alert('Registration successful');
+    } catch (error) {
+      console.error('Error registering user:', error);
+      alert('Registration failed');
+    }
+  };
+
   return (
     <div className="login-container">
       <h1>Register Page</h1>
-      <form className="login-form">
+      <form className="login-form" onSubmit={handleRegister}>
+        <div className="input-group">
+          <label>Username:</label>
+          <input
+            type="text"
+            name="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="text-input"
+            required
+          />
+        </div>
         <div className="input-group">
           <label>Email:</label>
-          <input type="email" name="email" className="email-input" required />
+          <input
+            type="email"
+            name="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="email-input"
+            required
+          />
         </div>
         <div className="input-group password-field">
           <label>Password:</label>
@@ -138,6 +178,9 @@ const Register = () => {
           Register
         </button>
       </form>
+      <div className="login-link">
+        <p>Already have an account? <Link to="/login">Login here</Link></p>
+      </div>
     </div>
   );
 };
