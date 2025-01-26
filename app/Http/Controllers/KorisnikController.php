@@ -21,6 +21,9 @@ class KorisnikController extends Controller
 
 
 
+        // Osigurajte da se keš briše nakon kreiranja ili brisanja korisnika
+        Cache::forget('korisnici');
+
         // Keširanje liste korisnika na 60 minuta
         $korisnici = Cache::remember('korisnici', 60 * 60, function () {
             return Korisnik::all();
@@ -95,7 +98,7 @@ class KorisnikController extends Controller
      */
 
 
-//sr
+    //sr
     // public function store(Request $request)
     // {
     //     try {
@@ -182,6 +185,7 @@ class KorisnikController extends Controller
      */
     public function destroy($id)
     {
+
         $korisnik = Korisnik::find($id);
 
         if (!$korisnik) {
@@ -189,7 +193,21 @@ class KorisnikController extends Controller
         }
 
         $korisnik->delete();
+
+        // Brišemo keš nakon brisanja korisnika
+        Cache::forget('korisnici');
+
         return response()->json(null, 204);
+
+        
+        // $korisnik = Korisnik::find($id);
+
+        // if (!$korisnik) {
+        //     return response()->json(['error' => 'Korisnik nije pronađen'], 404);
+        // }
+
+        // $korisnik->delete();
+        // return response()->json(null, 204);
     }
 
     public function promeniLozinku(Request $request, Korisnik $korisnik)

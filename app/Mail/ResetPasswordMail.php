@@ -20,7 +20,7 @@ class ResetPasswordMail extends Mailable
     /**
      * Create a new message instance.
      * 
-     *  @return voids
+     *  @return void
      */
     public function __construct($token)
     {

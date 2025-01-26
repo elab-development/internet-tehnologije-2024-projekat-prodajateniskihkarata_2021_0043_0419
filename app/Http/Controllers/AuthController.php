@@ -17,6 +17,7 @@ use App\Mail\ResetPasswordMail;
 use Illuminate\Support\Facades\DB;
 
 
+
 class AuthController extends Controller
 {
     // public function register(Request $request)
@@ -87,12 +88,24 @@ class AuthController extends Controller
                 'ime' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:korisniks,email',
                 'lozinka' => 'required|string|min:8|confirmed',
-                'uloga' => 'required|string|in:admin,auth_user,guest',
-                'datum_registracije' => 'required|date_format:Y-m-d H:i:s',
             ]);
+
+            // Postavljanje default vrednosti za ulogu i datum registracije
+            $validatedData['uloga'] = 'auth_user';
+            $validatedData['datum_registracije'] = now();
+
+            // // Kreiranje korisnika
+            // $korisnik = Korisnik::create([
+            //     'ime' => $validatedData['ime'],
+            //     'email' => $validatedData['email'],
+            //     'lozinka' => Hash::make($validatedData['lozinka']),
+            //     'uloga' => $validatedData['uloga'],
+            //     'datum_registracije' => $validatedData['datum_registracije'],
+            // ]);
 
             // Kreiranje korisnika
             $korisnik = Korisnik::create($validatedData);
+
 
             // Generisanje tokena
             $token = $korisnik->createToken('auth_token')->plainTextToken;
@@ -121,59 +134,58 @@ class AuthController extends Controller
         }
     }
 
-    public function login(Request $request)
-    {
-        try {
-            // Validacija podataka
-            $request->validate([
-                'email' => 'required|string|email',
-                'lozinka' => 'required|string',
-            ]);
+public function login(Request $request)
+{
+    try {
+        // Validacija podataka
+        $request->validate([
+            'email' => 'required|string|email',
+            'lozinka' => 'required|string',
+        ]);
 
-            // Logovanje podataka za proveru
-            Log::info('Attempting login with email: ' . $request->email);
+        // Logovanje podataka za proveru
+        Log::info('Attempting login with email: ' . $request->email);
 
-            // Dohvatanje korisnika
-            $korisnik = Korisnik::where('email', $request->email)->first();
+        // Dohvatanje korisnika
+        $korisnik = Korisnik::where('email', $request->email)->first();
 
-            if (!$korisnik) {
-                Log::warning('No user found with email: ' . $request->email);
-                return response()->json(['error' => 'Invalid credentials'], 401);
-            }
-
-            // Provera lozinke
-            if (!Hash::check($request->lozinka, $korisnik->lozinka)) {
-                Log::warning('Incorrect password for email: ' . $request->email);
-                return response()->json(['error' => 'Invalid credentials'], 401);
-            }
-
-            // Generisanje tokena
-            $token = $korisnik->createToken('auth_token')->plainTextToken;
-
-            if (!$token) {
-                Log::error('Failed to generate token for user: ' . $korisnik->email);
-                return response()->json(['error' => 'Token generation failed'], 500);
-            }
-
-            // Vraćanje odgovora sa tokenom i korisničkim podacima
-            return response()->json([
-                'access_token' => $token,
-                'token_type' => 'Bearer',
-                'user' => [
-                    'email' => $korisnik->email,
-                    'ime' => $korisnik->ime,
-                    'uloga' => $korisnik->uloga,
-                    'datum_registracije' => $korisnik->datum_registracije,
-                ],
-            ], 200);
-
-        } catch (\Exception $e) {
-            // Logovanje greške
-            Log::error('Error during login: ' . $e->getMessage());
-            return response()->json(['error' => 'Internal Server Error'], 500);
+        if (!$korisnik) {
+            Log::warning('No user found with email: ' . $request->email);
+            return response()->json(['error' => 'Invalid credentials'], 401);
         }
-    }
 
+        // Provera lozinke
+        if (!Hash::check($request->lozinka, $korisnik->lozinka)) {
+            Log::warning('Incorrect password for email: ' . $request->email);
+            return response()->json(['error' => 'Invalid credentials'], 401);
+        }
+
+        // Generisanje tokena
+        $token = $korisnik->createToken('auth_token')->plainTextToken;
+
+        if (!$token) {
+            Log::error('Failed to generate token for user: ' . $korisnik->email);
+            return response()->json(['error' => 'Token generation failed'], 500);
+        }
+
+        // Vraćanje odgovora sa tokenom i korisničkim podacima
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'user' => [
+                'email' => $korisnik->email,
+                'ime' => $korisnik->ime,
+                'uloga' => $korisnik->uloga,
+                'datum_registracije' => $korisnik->datum_registracije,
+            ],
+        ], 200);
+
+    } catch (\Exception $e) {
+        // Logovanje greške
+        Log::error('Error during login: ' . $e->getMessage());
+        return response()->json(['error' => 'Internal Server Error'], 500);
+    }
+}
     public function logout(Request $request)
     {
         try {

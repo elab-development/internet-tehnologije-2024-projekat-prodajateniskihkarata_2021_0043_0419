@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
 
 class Korisnik extends Authenticatable
 {
-    use HasFactory, HasApiTokens;
+    use HasFactory, Notifiable, HasApiTokens;
 
 
     protected $fillable = [
@@ -22,6 +23,10 @@ class Korisnik extends Authenticatable
     protected $hidden = [
         'lozinka',
         'remember_token',
+    ];
+
+    protected $casts = [
+        'datum_registracije' => 'datetime',
     ];
 
     // Mutator to hash password before saving to the database
