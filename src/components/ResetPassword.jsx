@@ -1,23 +1,12 @@
 // ResetPassword.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
-import Cookies from 'js-cookie';
 
 const ResetPassword = () => {
     const [token, setToken] = useState('');
     const [password, setPassword] = useState('');
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
     const [message, setMessage] = useState('');
-
-    useEffect(() => {
-        // Dohvatanje tokena iz kolačića
-        const token = Cookies.get('password_reset_token');
-        if (token) {
-            setToken(token);
-        } else {
-            setMessage('No token found. Please request a new password reset.');
-        }
-    }, []);
 
     const handleResetPassword = async (e) => {
         e.preventDefault();
@@ -34,10 +23,25 @@ const ResetPassword = () => {
         }
     };
 
+    const handleTokenChange = (e) => {
+        setToken(e.target.value);
+    };
+
     return (
         <div className="reset-password-container">
             <h1>Reset Password</h1>
             <form className="reset-password-form" onSubmit={handleResetPassword}>
+                <div className="input-group">
+                    <label>Token:</label>
+                    <input
+                        type="text"
+                        name="token"
+                        value={token}
+                        onChange={handleTokenChange}
+                        className="token-input"
+                        required
+                    />
+                </div>
                 <div className="input-group">
                     <label>New Password:</label>
                     <input
