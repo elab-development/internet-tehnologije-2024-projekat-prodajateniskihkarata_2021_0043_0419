@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Reset Password</title>
+    <title>Resetovanje lozinke</title>
 </head>
 <body>
-    <h1>Reset Password</h1>
-    <form action="{{ url('password/reset') }}" method="POST">
-        <!-- <form action="{{ route('password.update') }}" method="POST"> -->
+    <h1>Resetovanje lozinke</h1>
+    <form action="{{ url('api/korisnici/' . $userId . '/promena-lozinke/' . $token) }}" method="POST">
         @csrf
-        <input type="hidden" name="token" value="{{ $token }}">
-        <label for="email">Email:</label>
-        <input type="email" name="email" required>
-        <label for="password">New Password:</label>
-        <input type="password" name="password" required>
-        <label for="password_confirmation">Confirm Password:</label>
-        <input type="password" name="password_confirmation" required>
-        <button type="submit">Reset Password</button>
+        <div class="input-group">
+            <label>Nova lozinka:</label>
+            <input type="password" name="password" required>
+        </div>
+        <div class="input-group">
+            <label>Potvrda nove lozinke:</label>
+            <input type="password" name="password_confirmation" required>
+        </div>
+        <button type="submit">Resetuj lozinku</button>
     </form>
 </body>
 </html>

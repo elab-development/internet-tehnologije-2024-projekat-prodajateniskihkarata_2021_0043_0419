@@ -24,12 +24,53 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use App\Http\Controllers\WeatherController;
 
 
-Route::get('password/reset/{token}', [AuthController::class, 'showResetForm'])->name('password.reset');
 
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// // Prikaz forme za resetovanje lozinke
+// Route::get('password/reset/{token}/{userId}', [AuthController::class, 'showResetForm'])->name('password.reset');
+
+// // Podnošenje nove lozinke
+// Route::post('api/korisnici/{id}/promena-lozinke/{token}', [KorisnikController::class, 'promeniLozinku'])->name('password.update');
+
+
+// // Ruta za prikaz forme za resetovanje lozinke
+// Route::get('/reset-password/{token}/{userId}', [AuthController::class, 'showResetForm'])->name('password.reset');
+
+// // Podnošenje nove lozinke
+// Route::post('api/korisnici/{id}/promena-lozinke/{token}', [AuthController::class, 'resetPassword'])->name('password.update');
+
+// // Ruta za prikaz forme za resetovanje lozinke
+// Route::get('/password/reset/{token}', [AuthController::class, 'showResetForm'])->name('password.reset');
+
+// // Ruta za podnošenje nove lozinke
+// Route::post('/password/reset', [AuthController::class, 'resetPassword'])->name('password.update');
+
+
+// // Ruta za prikaz forme za zaboravljenu lozinku
+// Route::get('/password/request', function () {
+//     return view('auth.forgot-password');
+// })->name('password.request');
+
+
+
+
+// Route::get('/reset-password/{token}/{userId}', [AuthController::class, 'showResetForm'])->name('password.reset');
+
+// Route::get('password/reset/{token}', [AuthController::class, 'showResetForm'])->name('password.reset');
+// Route::post('password/reset', [AuthController::class, 'resetPassword']);
+
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+
+// // Prikaz forme za resetovanje lozinke
+// Route::get('password/reset/{token}/{userId}', [AuthController::class, 'showResetForm'])->name('password.reset');
+
+// // Podnošenje nove lozinke
+// Route::post('api/korisnici/{id}/promena-lozinke/{token}', [KorisnikController::class, 'promeniLozinku'])->name('password.update');
+
+
+
 
 //Auth::routes();
 

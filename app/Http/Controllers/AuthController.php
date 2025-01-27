@@ -202,90 +202,165 @@ public function login(Request $request)
         }
     }
     // GPT
+    // public function forgotPassword(Request $request)
+    // {
+    //     try {
+    //         // Validacija emaila
+    //         $request->validate(['email' => 'required|email']);
+    
+    //         // Provera da li korisnik postoji
+    //         $korisnik = Korisnik::where('email', $request->email)->first();
+    
+    //         if (!$korisnik) {
+    //             Log::warning('Password reset requested for non-existent email: ' . $request->email);
+    //             return response()->json(['error' => 'User not found'], 404);
+    //         }
+    
+    //         // Generisanje privremenog tokena za reset lozinke
+    //         $token = Str::random(60);
+    
+    //         // Smeštanje tokena u bazu ili korišćenje tabele `password_resets`
+    //         DB::table('password_resets')->updateOrInsert(
+    //             ['email' => $request->email],
+    //             [
+    //                 'token' => Hash::make($token),
+    //                 'created_at' => now(),
+    //             ]
+    //         );
+    
+    //         // Slanje email-a korisniku sa linkom koji uključuje ID korisnika
+    //         Mail::to($korisnik->email)->send(new ResetPasswordMail($token, $korisnik->id));
+    
+    //         return response()->json(['message' => 'Reset password email sent'], 200);
+    //     } catch (\Illuminate\Validation\ValidationException $e) {
+    //         Log::error('Validation error during password reset: ' . json_encode($e->errors()));
+    //         return response()->json(['error' => 'Validation failed', 'details' => $e->errors()], 422);
+    //     } catch (\Exception $e) {
+    //         Log::error('Error during password reset: ' . $e->getMessage());
+    //         return response()->json(['error' => 'Internal Server Error'], 500);
+    //     }
+    // }
+
     public function forgotPassword(Request $request)
-    {
-        try {
-            // Validacija emaila
-            $request->validate(['email' => 'required|email']);
+{
+    try {
+        // Validacija emaila
+        $request->validate(['email' => 'required|email']);
 
-            // Provera da li korisnik postoji
-            $korisnik = Korisnik::where('email', $request->email)->first();
-
-            if (!$korisnik) {
-                Log::warning('Password reset requested for non-existent email: ' . $request->email);
-                return response()->json(['error' => 'User not found'], 404);
-            }
-
-            // Generisanje privremenog tokena za reset lozinke
-            $token = Str::random(60);
-
-            // Smeštanje tokena u bazu ili korišćenje tabele `password_resets`
-            DB::table('password_resets')->updateOrInsert(
-                ['email' => $request->email],
-                [
-                    'token' => Hash::make($token),
-                    'created_at' => now(),
-                ]
-            );
-
-            // Slanje email-a korisniku (možeš koristiti queue za asinkrono slanje)
-            Mail::to($korisnik->email)->send(new ResetPasswordMail($token));
-
-            return response()->json(['message' => 'Reset password email sent'], 200);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            Log::error('Validation error during password reset: ' . json_encode($e->errors()));
-            return response()->json(['error' => 'Validation failed', 'details' => $e->errors()], 422);
-        } catch (\Exception $e) {
-            Log::error('Error during password reset: ' . $e->getMessage());
-            return response()->json(['error' => 'Internal Server Error'], 500);
-        }
-    }
-
-
-
-    // Metoda za resetovanje lozinke
-    public function resetPassword(Request $request)
-    {
-        // Validacija podataka iz zahteva
-        $request->validate([
-            'email' => 'required|string|email',
-        ]);
-
-        // Dohvatanje korisnika
-        $korisnik = Korisnik::where('email', $request->input('email'))->first();
+        // Provera da li korisnik postoji
+        $korisnik = Korisnik::where('email', $request->email)->first();
 
         if (!$korisnik) {
-            return response()->json(['message' => 'User not found'], 404);
+            Log::warning('Password reset requested for non-existent email: ' . $request->email);
+            return response()->json(['error' => 'User not found'], 404);
         }
 
-        // Generisanje nove lozinke
-        $newPassword = Str::random(8);
+        // Generisanje privremenog tokena za reset lozinke
+        $token = Str::random(60);
 
-        // Postavljanje nove lozinke
-        $korisnik->lozinka = Hash::make($newPassword);
-        $korisnik->save();
+        // Smeštanje tokena u bazu ili korišćenje tabele `password_resets`
+        DB::table('password_resets')->updateOrInsert(
+            ['email' => $request->email],
+            [
+                'token' => $token,
+                'created_at' => now(),
+            ]
+        );
 
-        // Slanje emaila sa novom lozinkom (ovo je samo primer, u stvarnom svetu koristili bismo servis za slanje emailova)
-        Mail::raw('Your new password is: ' . $newPassword, function ($message) use ($korisnik) {
-            $message->to($korisnik->email)
-                ->subject('Password Reset');
-        });
+        // Slanje email-a korisniku sa linkom koji uključuje ID korisnika
+        Mail::to($korisnik->email)->send(new ResetPasswordMail($token, $korisnik->id));
 
-        // Vraćanje odgovora sa porukom o uspešnom resetovanju lozinke
-        return response()->json(['message' => 'Password reset successfully. Please check your email for the new password.'], 200);
+        return response()->json(['message' => 'Reset password email sent'], 200);
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        Log::error('Validation error during password reset: ' . json_encode($e->errors()));
+        return response()->json(['error' => 'Validation failed', 'details' => $e->errors()], 422);
+    } catch (\Exception $e) {
+        Log::error('Error during password reset: ' . $e->getMessage());
+        return response()->json(['error' => 'Internal Server Error'], 500);
     }
+}
 
 
-    public function showResetForm($token)
+//     // Metoda za resetovanje lozinke    OVO VALJA
+//     public function resetPassword(Request $request)
+// {
+//     // Validacija podataka iz zahteva
+//     $request->validate([
+//         'email' => 'required|string|email',
+//         'password' => 'required|string|min:8|confirmed',
+//         'token' => 'required|string'
+//     ]);
+
+//     // Dohvatanje zahteva za resetovanje
+//     $resetRequest = DB::table('password_resets')->where('token', $request->token)->first();
+
+//     if (!$resetRequest) {
+//         return response()->json(['message' => 'Invalid token'], 400);
+//     }
+
+//     // Dohvatanje korisnika
+//     $korisnik = Korisnik::where('email', $request->email)->first();
+
+//     if (!$korisnik) {
+//         return response()->json(['message' => 'User not found'], 404);
+//     }
+
+//     // Postavljanje nove lozinke
+//     $korisnik->lozinka = Hash::make($request->password);
+//     $korisnik->save();
+
+//     // Brisanje zahteva za resetovanje lozinke
+//     DB::table('password_resets')->where('email', $request->email)->delete();
+
+//     return response()->json(['message' => 'Password reset successfully.'], 200);
+// }
+
+
+
+
+//  // Metoda za resetovanje lozinke
+//  public function resetPassword(Request $request)
+//  {
+//      // Validacija podataka iz zahteva
+//      $request->validate([
+//          'email' => 'required|string|email',
+//      ]);
+
+//      // Dohvatanje korisnika
+//      $korisnik = Korisnik::where('email', $request->input('email'))->first();
+
+//      if (!$korisnik) {
+//          return response()->json(['message' => 'User not found'], 404);
+//      }
+
+//      // Generisanje nove lozinke
+//      $newPassword = Str::random(8);
+
+//      // Postavljanje nove lozinke
+//      $korisnik->lozinka = Hash::make($newPassword);
+//      $korisnik->save();
+
+//      // Slanje emaila sa novom lozinkom (ovo je samo primer, u stvarnom svetu koristili bismo servis za slanje emailova)
+//      Mail::raw('Your new password is: ' . $newPassword, function ($message) use ($korisnik) {
+//          $message->to($korisnik->email)
+//              ->subject('Password Reset');
+//      });
+
+//      // Vraćanje odgovora sa porukom o uspešnom resetovanju lozinke
+//      return response()->json(['message' => 'Password reset successfully. Please check your email for the new password.'], 200);
+//  }
+
+
+
+    public function showResetForm($token, $userId)
     {
-        // Provera da li je token validan
         $resetRequest = DB::table('password_resets')->where('token', $token)->first();
 
         if (!$resetRequest) {
             return redirect()->route('password.request')->withErrors(['token' => 'This password reset token is invalid.']);
         }
 
-        return view('auth.reset-password', ['token' => $token]);
+        return view('auth.reset-password', ['token' => $token, 'userId' => $userId]);
     }
 
 

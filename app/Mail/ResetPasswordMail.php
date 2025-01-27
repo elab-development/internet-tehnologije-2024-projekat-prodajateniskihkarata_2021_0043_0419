@@ -9,22 +9,22 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-
-
 class ResetPasswordMail extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $token;
+    public $userId;
 
     /**
      * Create a new message instance.
      * 
-     *  @return void
+     * @return void
      */
-    public function __construct($token)
+    public function __construct($token, $userId)
     {
         $this->token = $token;
+        $this->userId = $userId;
     }
 
     /**
@@ -62,13 +62,36 @@ class ResetPasswordMail extends Mailable
      *
      * @return $this
      */
-
     public function build()
     {
         return $this->subject('Resetovanje lozinke')
-            ->view('emails.reset_password') 
-            ->with(['token' => $this->token]);
+            ->view('emails.reset_password')
+            ->with([
+                'token' => $this->token,
+                'userId' => $this->userId,
+            ]);
     }
+}
+
+
+    //  public function build()
+    //  {
+    //      return $this->subject('Resetovanje lozinke')
+    //          ->view('emails.reset_password') 
+    //          ->with([
+    //              'token' => $this->token,
+    //              'userId' => $this->userId
+    //          ]);
+    //  }
+
+    //  public function build()
+    // {
+    //     $resetUrl = url("http://localhost:3000/ResetPassword" . $this->token);
+
+    //     return $this->view('emails.reset_password')
+    //                 ->with(['resetUrl' => $resetUrl]);
+    // }
+
 
 
     // public function build()
@@ -78,4 +101,4 @@ class ResetPasswordMail extends Mailable
     //             'token' => $this->token,
     //         ]);
     // }
-}
+

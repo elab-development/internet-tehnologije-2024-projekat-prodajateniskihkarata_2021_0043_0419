@@ -17,8 +17,24 @@ use App\Http\Controllers\ApiController;
 use Illuminate\Support\Facades\Cache;
 
 
-Route::get('/dogadjaji/pretraga', [DogadjajController::class, 'pretraga']);
+Route::get('/get-reset-token', function () {
+    return response()->json(['token' => Session::get('password_reset_token')]);
+});
 
+
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+// // Ruta za prikaz forme za resetovanje lozinke
+// Route::get('/password/reset/{token}/{userId}', [AuthController::class, 'showResetForm'])->name('password.reset');
+
+// // Ruta za podnošenje nove lozinke
+// Route::post('/password/reset', [AuthController::class, 'resetPassword']);
+
+
+
+Route::get('/dogadjaji/pretraga', [DogadjajController::class, 'pretraga']);
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
 // Rute dostupne svima (bez autentifikacije)
 Route::get('/dogadjaji', [DogadjajController::class, 'index']);
