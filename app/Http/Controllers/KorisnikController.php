@@ -241,45 +241,135 @@ class KorisnikController extends Controller
     //     }
     // }
 
-    public function promeniLozinku(Request $request, $id, $token)
-{
-    try {
-        Log::info('Započeo proces promene lozinke.');
 
-        $request->validate([
-            'nova_lozinka' => 'required|min:8|confirmed',
-        ]);
+    //OVO RADI
 
-        // Pronalazak zapisa za resetovanje lozinke
-        $resetRequest = DB::table('password_resets')->where('token', $token)->first();
+//     public function promeniLozinku(Request $request, $id)
+// {
+//     try {
+//         Log::info('Započeo proces promene lozinke.');
 
-        if (!$resetRequest) {
-            Log::error('Neispravan token.');
-            return response()->json(['error' => 'Invalid token'], 400);
+//         $request->validate([
+//             'stara_lozinka' => 'required',
+//             'nova_lozinka' => 'required|min:8|confirmed',
+//         ]);
+
+//         $korisnik = Korisnik::find($id);
+
+//         if (!$korisnik) {
+//             Log::error('Korisnik nije pronađen.');
+//             return response()->json(['error' => 'Korisnik nije pronađen'], 404);
+//         }
+
+//         // Provera stara lozinka
+//         if (!Hash::check($request->stara_lozinka, $korisnik->lozinka)) {
+//             Log::error('Stara lozinka nije ispravna.');
+//             return response()->json(['error' => 'Stara lozinka nije ispravna.'], 400);
+//         }
+
+//         // Promena lozinke
+//         $korisnik->lozinka = Hash::make($request->nova_lozinka);
+//         $korisnik->save();
+
+//         Log::info('Lozinka uspešno promenjena.');
+
+//         return response()->json(['message' => 'Lozinka je uspešno promenjena.'], 200);
+//     } catch (\Exception $e) {
+//         Log::error('Greška prilikom promene lozinke: ' . $e->getMessage());
+//         return response()->json(['error' => 'Došlo je do greške prilikom promene lozinke.'], 500);
+//     }
+// }
+
+
+
+public function promeniLozinku(Request $request, $id)
+    {
+        try {
+            Log::info('Započeo proces promene lozinke za korisnika ID: ' . $id);
+
+            $request->validate([
+                'stara_lozinka' => 'required',
+                'nova_lozinka' => 'required|min:8|confirmed',
+            ]);
+
+            $korisnik = Korisnik::find($id);
+
+            if (!$korisnik) {
+                Log::error('Korisnik nije pronađen.');
+                return response()->json(['error' => 'Korisnik nije pronađen'], 404);
+            }
+
+            // Provera stara lozinka
+            if (!Hash::check($request->stara_lozinka, $korisnik->lozinka)) {
+                Log::error('Stara lozinka nije ispravna.');
+                return response()->json(['error' => 'Stara lozinka nije ispravna.'], 400);
+            }
+
+            // Promena lozinke
+            $korisnik->lozinka = $request->nova_lozinka;
+            $korisnik->save();
+
+            Log::info('Lozinka uspešno promenjena za korisnika ID: ' . $id);
+
+            return response()->json(['message' => 'Lozinka je uspešno promenjena.'], 200);
+        } catch (\Exception $e) {
+            Log::error('Greška prilikom promene lozinke: ' . $e->getMessage());
+            return response()->json(['error' => 'Došlo je do greške prilikom promene lozinke.'], 500);
         }
-
-        // Pronalazak korisnika
-        $korisnik = Korisnik::find($id);
-
-        if (!$korisnik || $korisnik->email != $resetRequest->email) {
-            Log::error('Korisnik nije pronađen.');
-            return response()->json(['error' => 'User not found'], 404);
-        }
-
-        // Promena lozinke
-        $korisnik->lozinka = Hash::make($request->nova_lozinka);
-        $korisnik->save();
-
-        // Brisanje zapisa za resetovanje lozinke
-        DB::table('password_resets')->where('email', $resetRequest->email)->delete();
-
-        Log::info('Lozinka uspešno promenjena.');
-
-        return response()->json(['message' => 'Lozinka je uspešno promenjena.'], 200);
-    } catch (\Exception $e) {
-        Log::error('Greška prilikom promene lozinke: ' . $e->getMessage());
-        return response()->json(['error' => 'Došlo je do greške prilikom promene lozinke.'], 500);
     }
+
+
+// public function promeniLozinku(Request $request, $id)
+// {
+//     try {
+//         Log::info('Započeo proces promene lozinke za korisnika ID: ' . $id);
+
+//         $request->validate([
+//             'stara_lozinka' => 'required',
+//             'nova_lozinka' => 'required|min:8|confirmed',
+//         ]);
+
+//         $korisnik = Korisnik::find($id);
+
+//         if (!$korisnik) {
+//             Log::error('Korisnik nije pronađen.');
+//             return response()->json(['error' => 'Korisnik nije pronađen'], 404);
+//         }
+
+//         // Provera stara lozinka
+//         if (!Hash::check($request->stara_lozinka, $korisnik->lozinka)) {
+//             Log::error('Stara lozinka nije ispravna.');
+//             return response()->json(['error' => 'Stara lozinka nije ispravna.'], 400);
+//         }
+
+//         // Promena lozinke
+//         $korisnik->lozinka = Hash::make($request->nova_lozinka);
+//         $korisnik->save();
+
+//         Log::info('Lozinka uspešno promenjena za korisnika ID: ' . $id);
+
+//         return response()->json(['message' => 'Lozinka je uspešno promenjena.'], 200);
+//     } catch (\Exception $e) {
+//         Log::error('Greška prilikom promene lozinke: ' . $e->getMessage());
+//         return response()->json(['error' => 'Došlo je do greške prilikom promene lozinke.'], 500);
+//     }
+// }
+
+public function getUser(Request $request)
+{
+    $korisnik = $request->user();
+
+    if (!$korisnik) {
+        return response()->json(['error' => 'Korisnik nije prijavljen'], 401);
+    }
+
+    return response()->json([
+        'id' => $korisnik->id,
+        'email' => $korisnik->email,
+        'ime' => $korisnik->ime,
+        'uloga' => $korisnik->uloga,
+        'datum_registracije' => $korisnik->datum_registracije,
+    ], 200);
 }
 
 }

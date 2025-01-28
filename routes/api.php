@@ -17,6 +17,11 @@ use App\Http\Controllers\ApiController;
 use Illuminate\Support\Facades\Cache;
 
 
+
+Route::middleware('auth:sanctum')->get('/korisnik', [KorisnikController::class, 'getUser']);
+Route::middleware('auth:sanctum')->post('/korisnici/{id}/promena-lozinke', [KorisnikController::class, 'promeniLozinku']);
+
+
 Route::get('/get-reset-token', function () {
     return response()->json(['token' => Session::get('password_reset_token')]);
 });

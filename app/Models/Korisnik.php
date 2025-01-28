@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 
 class Korisnik extends Authenticatable
 {
     use HasFactory, Notifiable, HasApiTokens;
-
 
     protected $fillable = [
         'ime',
@@ -32,7 +32,7 @@ class Korisnik extends Authenticatable
     // Mutator to hash password before saving to the database
     public function setLozinkaAttribute($value)
     {
-        $this->attributes['lozinka'] = bcrypt($value);
+        $this->attributes['lozinka'] = Hash::make($value);
     }
 
     const ADMIN = 'admin';
