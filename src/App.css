@@ -407,3 +407,186 @@ ul li {
   background-size: 100% 100%;
 
 }
+
+
+
+
+/* ...postojeći sadržaj... */
+
+.user-menu {
+  position: relative;
+  display: inline-block;
+}
+
+.user-name {
+  cursor: pointer;
+  font-size: 18px;
+  color: white; /* Dodajte ovu liniju ako želite da korisničko ime bude bele boje */
+}
+
+.dropdown-menu {
+  display: none; /* Hide the dropdown menu by default */
+  flex-direction: column;
+  background-color: #333;
+  position: absolute;
+  top: 100%; /* Position the dropdown menu immediately below the navbar */
+  right: 0; /* Align the dropdown menu to the right edge */
+  padding: 10px;
+  box-sizing: border-box; /* Ensure padding is included in the width calculation */
+}
+
+.user-menu .dropdown-menu {
+  display: block; /* Override to always show dropdown menu for user menu */
+}
+
+.dropdown-menu a {
+  color: white;
+  text-decoration: none;
+  margin: 5px 0;
+}
+
+@media (min-width: 600px) {
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .navbar-right {
+    order: 1; /* Ensure user menu is on the right for larger screens */
+  }
+
+  .navbar-left a, .navbar-right a {
+    display: block; /* Show the links for larger screens */
+  }
+
+  .hamburger, .dropdown-menu {
+    display: none; /* Hide the hamburger menu and dropdown for larger screens */
+  }
+
+  .user-menu-mobile {
+    display: none; /* Hide the mobile user menu on larger screens */
+  }
+
+  .user-menu-desktop {
+    display: inline-block; /* Show the desktop user menu on larger screens */
+  }
+}
+
+@media (max-width: 599px) {
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .navbar-left {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  .navbar-left a,
+  .navbar-right a {
+    display: none; /* Hide the links for smaller screens */
+  }
+
+  .user-name {
+    margin-right: auto; /* Push user name to the far left */
+  }
+
+  .hamburger {
+    display: block; /* Show the hamburger menu for smaller screens */
+  }
+
+  .dropdown-menu {
+    display: flex; /* Display the dropdown menu for smaller screens */
+    width: auto; /* Auto width to fit content */
+    right: 0; /* Align the dropdown menu to the right edge */
+    top: 100%; /* Position the dropdown menu immediately below the navbar */
+  }
+
+  .user-menu-desktop {
+    display: none; /* Hide the desktop user menu on smaller screens */
+  }
+
+  .user-menu-mobile {
+    display: inline-block; /* Show the mobile user menu on smaller screens */
+  }
+
+  .user-menu .dropdown-menu {
+    position: static; /* For mobile, make the dropdown static */
+    width: 100%; /* Make it full width */
+  }
+}
+
+
+
+
+
+
+/* ...postojeći sadržaj... */
+
+.change-password-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+.change-password-container h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.password-input-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrapper input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.toggle-password {
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+}
+
+.success-message {
+  color: green;
+  margin-top: 10px;
+}
+
+button {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  width: 100%;
+}
+
+button:hover {
+  background-color: #0056b3;
+}

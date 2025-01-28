@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; // Pretpostavljamo da koristite react-router-dom za navigaciju
+import React, { useState, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom'; // Pretpostavljamo da koristite react-router-dom za navigaciju
 import axios from 'axios';
+import { UserContext } from '../contexts/UserContext';
 
 const Login = () => {
+    const { setUser } = useContext(UserContext);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
 
     const toggleShowPassword = () => {
         setShowPassword(!showPassword);
@@ -26,6 +29,8 @@ const Login = () => {
             alert('Login successful');
             // Save the token to local storage or context
             localStorage.setItem('token', response.data.access_token);
+            setUser(response.data.user);
+            navigate('/');
         } catch (error) {
             console.error('Error logging in:', error);
             if (error.response && error.response.status === 401) {

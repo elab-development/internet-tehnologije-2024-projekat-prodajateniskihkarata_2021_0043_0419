@@ -1,12 +1,14 @@
-// ResetPassword.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
+import './passwords.css';
 
 const ResetPassword = () => {
     const [token, setToken] = useState('');
     const [password, setPassword] = useState('');
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
     const [message, setMessage] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false);
 
     const handleResetPassword = async (e) => {
         e.preventDefault();
@@ -44,25 +46,35 @@ const ResetPassword = () => {
                 </div>
                 <div className="input-group">
                     <label>New Password:</label>
-                    <input
-                        type="password"
-                        name="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="password-input"
-                        required
-                    />
+                    <div className="password-input-wrapper">
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            name="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="password-input"
+                            required
+                        />
+                        <span className="toggle-password" onClick={() => setShowPassword(!showPassword)}>
+                            {showPassword ? "🙈" : "👁️"}
+                        </span>
+                    </div>
                 </div>
                 <div className="input-group">
                     <label>Confirm New Password:</label>
-                    <input
-                        type="password"
-                        name="passwordConfirmation"
-                        value={passwordConfirmation}
-                        onChange={(e) => setPasswordConfirmation(e.target.value)}
-                        className="password-confirmation-input"
-                        required
-                    />
+                    <div className="password-input-wrapper">
+                        <input
+                            type={showPasswordConfirmation ? "text" : "password"}
+                            name="passwordConfirmation"
+                            value={passwordConfirmation}
+                            onChange={(e) => setPasswordConfirmation(e.target.value)}
+                            className="password-confirmation-input"
+                            required
+                        />
+                        <span className="toggle-password" onClick={() => setShowPasswordConfirmation(!showPasswordConfirmation)}>
+                            {showPasswordConfirmation ? "🙈" : "👁️"}
+                        </span>
+                    </div>
                 </div>
                 <button type="submit" className="reset-password-button">Reset Password</button>
             </form>

@@ -13,33 +13,38 @@ import Footer from './components/Footer';
 import BreadcrumbsComponent from './components/Breadcrumbs';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
+import ChangePassword from './components/ChangePassword';
+import { UserProvider } from './contexts/UserContext';
 
 import './App.css';
 
 function App() {
     return (
-        <Router>
-            <BreadcrumbsProvider>
-                <div className="app-container">
-                    <NavBar />
-                    <BreadcrumbsComponent />
-                    <div className="content">
-                        <Routes>
-                            <Route path="/" element={<Home />} />
-                            <Route path="/matches" element={<Matches />} />
-                            <Route path="/matches/:id" element={<MatchDetails />} /> {/* Ruta za detalje */}
-                            <Route path="/buy-ticket" element={<BuyTicket />} />
-                            <Route path="/login" element={<Login />} />
-                            <Route path="/register" element={<Register />} />
-                            <Route path="/contact" element={<Contact />} />
-                            <Route path="/forgot-password" element={<ForgotPassword />} />
-                            <Route path="/Reset-password" element={<ResetPassword />} />
-                        </Routes>
+        <UserProvider>
+            <Router>
+                <BreadcrumbsProvider>
+                    <div className="app-container">
+                        <NavBar />
+                        <BreadcrumbsComponent />
+                        <div className="content">
+                            <Routes>
+                                <Route path="/" element={<Home />} />
+                                <Route path="/matches" element={<Matches />} />
+                                <Route path="/matches/:id" element={<MatchDetails />} /> {/* Ruta za detalje */}
+                                <Route path="/buy-ticket" element={<BuyTicket />} />
+                                <Route path="/login" element={<Login />} />
+                                <Route path="/register" element={<Register />} />
+                                <Route path="/contact" element={<Contact />} />
+                                <Route path="/forgot-password" element={<ForgotPassword />} />
+                                <Route path="/reset-password" element={<ResetPassword />} />
+                                <Route path="/change-password" element={<ChangePassword />} />
+                            </Routes>
+                        </div>
+                        <Footer />
                     </div>
-                    <Footer />
-                </div>
-            </BreadcrumbsProvider>
-        </Router>
+                </BreadcrumbsProvider>
+            </Router>
+        </UserProvider>
     );
 }
 
