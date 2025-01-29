@@ -590,3 +590,10 @@ button {
 button:hover {
   background-color: #0056b3;
 }
+.cart-icon {
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
