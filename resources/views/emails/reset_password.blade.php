@@ -8,7 +8,7 @@
 <body>
     <h1>Reset Password</h1>
     <p>Click the link below to reset your password:</p>
-    <a href="http://localhost:3000/reset-password">Reset Password</a>
+    <a href="http://localhost:3000/reset-password?token={{ $token }}&userId={{ $userId }}">Reset Password</a>
     <p>Your token: {{ $token }}</p>
 </body>
 </html>

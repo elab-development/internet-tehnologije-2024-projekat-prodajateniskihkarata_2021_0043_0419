@@ -340,7 +340,7 @@ public function login(Request $request)
 }
 
 
-//     // Metoda za resetovanje lozinke    OVO VALJA
+    // Metoda za resetovanje lozinke    OVO neVALJA
 //     public function resetPassword(Request $request)
 // {
 //     // Validacija podataka iz zahteva
@@ -373,6 +373,74 @@ public function login(Request $request)
 
 //     return response()->json(['message' => 'Password reset successfully.'], 200);
 // }
+
+
+
+// OOVO VALJA
+// public function resetPassword(Request $request)
+// {
+//     $request->validate([
+//         'password' => 'required|string|min:8|confirmed',
+//         'token' => 'required|string',
+//         'userId' => 'required|integer'
+//     ]);
+
+//     $resetRequest = DB::table('password_resets')->where('token', $request->token)->first();
+
+//     if (!$resetRequest) {
+//         return response()->json(['message' => 'Invalid token'], 400);
+//     }
+
+//     $korisnik = Korisnik::find($request->userId);
+
+//     if (!$korisnik || $korisnik->email !== $resetRequest->email) {
+//         return response()->json(['message' => 'User not found'], 404);
+//     }
+
+//     $korisnik->lozinka = Hash::make($request->password);
+//     $korisnik->save();
+
+//     DB::table('password_resets')->where('email', $resetRequest->email)->delete();
+
+//     return response()->json(['message' => 'Password reset successfully.'], 200);
+// }
+
+
+
+public function resetPassword(Request $request)
+{
+    $request->validate([
+        'password' => 'required|string|min:8|confirmed',
+        'token' => 'required|string',
+        'userId' => 'required|integer'
+    ]);
+
+    Log::info('Reset password requested for user ID: ' . $request->userId);
+
+    $resetRequest = DB::table('password_resets')->where('token', $request->token)->first();
+
+    if (!$resetRequest) {
+        Log::warning('Invalid token for password reset');
+        return response()->json(['message' => 'Invalid token'], 400);
+    }
+
+    $korisnik = Korisnik::find($request->userId);
+
+    if (!$korisnik || $korisnik->email !== $resetRequest->email) {
+        Log::warning('User not found or email mismatch for ID: ' . $request->userId);
+        return response()->json(['message' => 'User not found'], 404);
+    }
+
+    Log::info('Updating password for user: ' . $korisnik->email);
+    $korisnik->lozinka = $request->password;
+    $korisnik->save();
+    Log::info('Password updated successfully for: ' . $korisnik->email);
+
+    DB::table('password_resets')->where('email', $resetRequest->email)->delete();
+
+    return response()->json(['message' => 'Password reset successfully.'], 200);
+}
+
 
 
 
