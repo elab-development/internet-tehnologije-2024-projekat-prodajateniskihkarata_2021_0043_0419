@@ -27,6 +27,7 @@ const NavBar = () => {
                 <Link to="/matches">Matches</Link>
                 <Link to="/buy-ticket">Buy Ticket</Link>
                 <Link to="/contact">Contact</Link>
+                {user && user.uloga === "admin" && <Link to="/users">Korisnici</Link>}
                 {user && (
                     <div className="user-menu user-menu-mobile">
                         <span className="user-name" onClick={toggleDropdown}>
@@ -70,6 +71,7 @@ const NavBar = () => {
                     <Link to="/matches" onClick={toggleMenu}>Matches</Link>
                     <Link to="/buy-ticket" onClick={toggleMenu}>Buy Ticket</Link>
                     <Link to="/contact" onClick={toggleMenu}>Contact</Link>
+                    {user && user.role === "admin" && <Link to="/users" onClick={toggleMenu}>Korisnici</Link>}
                     {user ? (
                         <>
                             <Link to="/change-password" onClick={toggleMenu}>Change Password</Link>

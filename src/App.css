@@ -69,6 +69,7 @@ body {
 
 .footer p {
   margin: 5px 0;
+  color: white;
 }
 /*
 .footer {
@@ -114,7 +115,7 @@ h1 {
 p {
   font-size: 16px;
   line-height: 1.6;
-  color: #555;
+  color: #fff;               /**/
 }
 
 h2 {
@@ -596,4 +597,32 @@ button:hover {
   border: none;
   cursor: pointer;
   margin-bottom: 10px;
+}
+
+
+
+
+
+
+.weather-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.weather-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.weather-button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
 }

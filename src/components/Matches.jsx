@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import OneEvent from "./OneEvent";
+import { UserContext } from "../contexts/UserContext"; // Ispravan import
 import "./Matches.css";
 
 const Matches = () => {
@@ -9,6 +10,9 @@ const Matches = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
   const [loading, setLoading] = useState(false);
+
+  const { user } = useContext(UserContext); // Dobijamo korisničke podatke
+  const isAdmin = user?.uloga === "admin";
 
   const fetchEvents = async (page = 1, filters = {}) => {
     setLoading(true);
@@ -116,7 +120,7 @@ const Matches = () => {
       ) : (
         <div className="events-list mt-4">
           {dogadjaji.map((dogadjaj) => (
-            <OneEvent key={dogadjaj.id} dogadjaj={dogadjaj} />
+            <OneEvent key={dogadjaj.id} dogadjaj={dogadjaj} isAdmin={isAdmin} />
           ))}
           <div className="pagination d-flex justify-content-between align-items-center mt-4">
             <button
@@ -152,6 +156,17 @@ const Matches = () => {
 };
 
 export default Matches;
+
+
+
+
+
+
+
+
+
+
+
 
 
 
