@@ -16,6 +16,13 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ApiController;
 use Illuminate\Support\Facades\Cache;
 
+use App\Http\Controllers\WeatherController;
+
+
+
+
+//Route::get('/weather', [WeatherController::class, 'getWeather']);
+
 
 
 Route::middleware('auth:sanctum')->get('/korisnik', [KorisnikController::class, 'getUser']);

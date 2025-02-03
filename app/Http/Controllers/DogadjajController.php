@@ -291,6 +291,44 @@ class DogadjajController extends Controller
         }
     }
 
+    /*
+
+    // Metoda za izmenu događaja
+public function update(Request $request, $id)
+{
+    $dogadjaj = Dogadjaj::find($id);
+
+    if (!$dogadjaj) {
+        return response()->json(['message' => 'Događaj nije pronađen.'], 404);
+    }
+
+    $dogadjaj->ime_dogadjaja = $request->ime_dogadjaja;
+    $dogadjaj->lokacija = $request->lokacija;
+    $dogadjaj->datum = $request->datum;
+    $dogadjaj->status = $request->status;
+    $dogadjaj->opis = $request->opis;
+    $dogadjaj->save();
+
+    return response()->json(['message' => 'Događaj je ažuriran.', 'data' => $dogadjaj]);
+}
+
+// Metoda za brisanje događaja
+public function destroy($id)
+{
+    $dogadjaj = Dogadjaj::find($id);
+
+    if (!$dogadjaj) {
+        return response()->json(['message' => 'Događaj nije pronađen.'], 404);
+    }
+
+    $dogadjaj->delete();
+
+    return response()->json(['message' => 'Događaj je obrisan.']);
+}
+
+
+    */
+
     /**
      * Remove the specified resource from storage.
      */

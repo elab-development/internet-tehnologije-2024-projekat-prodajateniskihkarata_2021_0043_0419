@@ -150,34 +150,63 @@ class KorisnikController extends Controller
     /**
      * Update the specified resource in storage.
      */
+
+    // STARA FUNKCIJA RADI UGLAVNOM
+    // public function update(Request $request, $id)
+    // {
+    //     // Validacija podataka iz zahteva
+    //     $validatedData = $request->validate([
+    //         'ime' => 'required|string|max:255',
+    //         'email' => 'required|string|email|max:255|unique:korisniks,email,' . $id,
+    //         'lozinka' => 'sometimes|string|min:8',
+    //         'uloga' => 'required|string|in:admin,auth_user,guest',
+    //         'datum_registracije' => 'required|date_format:Y-m-d H:i:s'
+    //     ]);
+
+    //     // Pronalazak korisnika po ID-ju
+    //     $korisnik = Korisnik::find($id);
+
+    //     if (!$korisnik) {
+    //         return response()->json(['error' => 'Korisnik nije pronađen'], 404);
+    //     }
+
+    //     // Ažuriranje lozinke ako je postavljena
+    //     if (isset($validatedData['lozinka'])) {
+    //         $validatedData['lozinka'] = Hash::make($validatedData['lozinka']);
+    //     } else {
+    //         unset($validatedData['lozinka']);
+    //     }
+
+    //     // Ažuriranje korisnika
+    //     $korisnik->update($validatedData);
+    //     return response()->json($korisnik, 200);
+    // }
+
+// NOVA F-JA RADI ZA SAJT
     public function update(Request $request, $id)
     {
-        // Validacija podataka iz zahteva
-        $validatedData = $request->validate([
+        $user = Korisnik::findOrFail($id);
+
+        // Validacija unosa
+        $validated = $request->validate([
             'ime' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:korisniks,email,' . $id,
-            'lozinka' => 'sometimes|string|min:8',
-            'uloga' => 'required|string|in:admin,auth_user,guest',
-            'datum_registracije' => 'required|date_format:Y-m-d H:i:s'
+            'email' => 'required|email|max:255|unique:users,email,' . $id,
+            'uloga' => 'required|in:guest,auth_user,admin',
+            'lozinka' => 'nullable|string|min:8',
         ]);
 
-        // Pronalazak korisnika po ID-ju
-        $korisnik = Korisnik::find($id);
+        // Ažuriramo korisnika, ali ne menjamo datum registracije
+        $user->ime = $validated['ime'];
+        $user->email = $validated['email'];
+        $user->uloga = $validated['uloga'];
 
-        if (!$korisnik) {
-            return response()->json(['error' => 'Korisnik nije pronađen'], 404);
+        if ($request->has('lozinka') && !empty($request->lozinka)) {
+            $user->password = bcrypt($validated['lozinka']);
         }
 
-        // Ažuriranje lozinke ako je postavljena
-        if (isset($validatedData['lozinka'])) {
-            $validatedData['lozinka'] = Hash::make($validatedData['lozinka']);
-        } else {
-            unset($validatedData['lozinka']);
-        }
+        $user->save();
 
-        // Ažuriranje korisnika
-        $korisnik->update($validatedData);
-        return response()->json($korisnik, 200);
+        return response()->json($user);
     }
 
     /**
@@ -199,7 +228,7 @@ class KorisnikController extends Controller
 
         return response()->json(null, 204);
 
-        
+
         // $korisnik = Korisnik::find($id);
 
         // if (!$korisnik) {
@@ -244,36 +273,36 @@ class KorisnikController extends Controller
 
     //OVO RADI
 
-//     public function promeniLozinku(Request $request, $id)
+    //     public function promeniLozinku(Request $request, $id)
 // {
 //     try {
 //         Log::info('Započeo proces promene lozinke.');
 
-//         $request->validate([
+    //         $request->validate([
 //             'stara_lozinka' => 'required',
 //             'nova_lozinka' => 'required|min:8|confirmed',
 //         ]);
 
-//         $korisnik = Korisnik::find($id);
+    //         $korisnik = Korisnik::find($id);
 
-//         if (!$korisnik) {
+    //         if (!$korisnik) {
 //             Log::error('Korisnik nije pronađen.');
 //             return response()->json(['error' => 'Korisnik nije pronađen'], 404);
 //         }
 
-//         // Provera stara lozinka
+    //         // Provera stara lozinka
 //         if (!Hash::check($request->stara_lozinka, $korisnik->lozinka)) {
 //             Log::error('Stara lozinka nije ispravna.');
 //             return response()->json(['error' => 'Stara lozinka nije ispravna.'], 400);
 //         }
 
-//         // Promena lozinke
+    //         // Promena lozinke
 //         $korisnik->lozinka = Hash::make($request->nova_lozinka);
 //         $korisnik->save();
 
-//         Log::info('Lozinka uspešno promenjena.');
+    //         Log::info('Lozinka uspešno promenjena.');
 
-//         return response()->json(['message' => 'Lozinka je uspešno promenjena.'], 200);
+    //         return response()->json(['message' => 'Lozinka je uspešno promenjena.'], 200);
 //     } catch (\Exception $e) {
 //         Log::error('Greška prilikom promene lozinke: ' . $e->getMessage());
 //         return response()->json(['error' => 'Došlo je do greške prilikom promene lozinke.'], 500);
@@ -282,7 +311,7 @@ class KorisnikController extends Controller
 
 
 
-public function promeniLozinku(Request $request, $id)
+    public function promeniLozinku(Request $request, $id)
     {
         try {
             Log::info('Započeo proces promene lozinke za korisnika ID: ' . $id);
@@ -319,57 +348,57 @@ public function promeniLozinku(Request $request, $id)
     }
 
 
-// public function promeniLozinku(Request $request, $id)
+    // public function promeniLozinku(Request $request, $id)
 // {
 //     try {
 //         Log::info('Započeo proces promene lozinke za korisnika ID: ' . $id);
 
-//         $request->validate([
+    //         $request->validate([
 //             'stara_lozinka' => 'required',
 //             'nova_lozinka' => 'required|min:8|confirmed',
 //         ]);
 
-//         $korisnik = Korisnik::find($id);
+    //         $korisnik = Korisnik::find($id);
 
-//         if (!$korisnik) {
+    //         if (!$korisnik) {
 //             Log::error('Korisnik nije pronađen.');
 //             return response()->json(['error' => 'Korisnik nije pronađen'], 404);
 //         }
 
-//         // Provera stara lozinka
+    //         // Provera stara lozinka
 //         if (!Hash::check($request->stara_lozinka, $korisnik->lozinka)) {
 //             Log::error('Stara lozinka nije ispravna.');
 //             return response()->json(['error' => 'Stara lozinka nije ispravna.'], 400);
 //         }
 
-//         // Promena lozinke
+    //         // Promena lozinke
 //         $korisnik->lozinka = Hash::make($request->nova_lozinka);
 //         $korisnik->save();
 
-//         Log::info('Lozinka uspešno promenjena za korisnika ID: ' . $id);
+    //         Log::info('Lozinka uspešno promenjena za korisnika ID: ' . $id);
 
-//         return response()->json(['message' => 'Lozinka je uspešno promenjena.'], 200);
+    //         return response()->json(['message' => 'Lozinka je uspešno promenjena.'], 200);
 //     } catch (\Exception $e) {
 //         Log::error('Greška prilikom promene lozinke: ' . $e->getMessage());
 //         return response()->json(['error' => 'Došlo je do greške prilikom promene lozinke.'], 500);
 //     }
 // }
 
-public function getUser(Request $request)
-{
-    $korisnik = $request->user();
+    public function getUser(Request $request)
+    {
+        $korisnik = $request->user();
 
-    if (!$korisnik) {
-        return response()->json(['error' => 'Korisnik nije prijavljen'], 401);
+        if (!$korisnik) {
+            return response()->json(['error' => 'Korisnik nije prijavljen'], 401);
+        }
+
+        return response()->json([
+            'id' => $korisnik->id,
+            'email' => $korisnik->email,
+            'ime' => $korisnik->ime,
+            'uloga' => $korisnik->uloga,
+            'datum_registracije' => $korisnik->datum_registracije,
+        ], 200);
     }
-
-    return response()->json([
-        'id' => $korisnik->id,
-        'email' => $korisnik->email,
-        'ime' => $korisnik->ime,
-        'uloga' => $korisnik->uloga,
-        'datum_registracije' => $korisnik->datum_registracije,
-    ], 200);
-}
 
 }
