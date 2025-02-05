@@ -1,13 +1,16 @@
+// BuyTickets.js
 import React, { useState } from "react";
 import TicketList from "./TicketList";
 import TicketForm from "./TicketForm";
 import Cart from "./Cart.jsx";
+import PaymentModal from "./PaymentModal.jsx";
 import "../App.css";
 
 function BuyTickets() {
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [cart, setCart] = useState([]);
   const [showCart, setShowCart] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   const tickets = [
     { id: 1, image: require("./slike/slikaterena1.jpg"), phase: "First Round", date: "25 Jan 2025", court: "Belgrade Arena Court 2", price: 10 },
@@ -28,21 +31,26 @@ function BuyTickets() {
   const handleAddToCart = (ticket, seatCategory, price) => {
     setCart((prevCart) => {
       const existingIndex = prevCart.findIndex((item) => item.phase === ticket.phase && item.seatCategory === seatCategory);
-
       if (existingIndex !== -1) {
         return prevCart.map((item, index) =>
           index === existingIndex ? { ...item, quantity: Math.min(item.quantity + 1, 5) } : item
         );
       }
-
       return [...prevCart, { ...ticket, seatCategory, price, quantity: 1 }];
     });
-
     setSelectedTicket(null);
   };
 
   const handleToggleCart = () => {
     setShowCart(!showCart);
+  };
+
+  const handleConfirmPurchase = () => {
+    if (cart.length === 0) {
+      alert("Cart is empty");
+    } else {
+      setShowPaymentModal(true);
+    }
   };
 
   return (
@@ -54,16 +62,30 @@ function BuyTickets() {
       {!showCart ? (
         <TicketList tickets={tickets} onBuyClick={handleBuyClick} />
       ) : (
-        <Cart cart={cart} setCart={setCart} setShowCart={setShowCart} />
-
+        <Cart 
+          cart={cart} 
+          setCart={setCart} 
+          setShowCart={setShowCart}
+          onConfirmPurchase={handleConfirmPurchase}
+        />
       )}
 
       {selectedTicket && (
         <TicketForm ticket={selectedTicket} onClose={handleCloseForm} onAddToCart={handleAddToCart} />
+      )}
+
+      {showPaymentModal && (
+        <PaymentModal 
+          onClose={() => setShowPaymentModal(false)} 
+          onSuccess={() => {
+            setCart([]);
+            setShowPaymentModal(false);
+            setShowCart(false);
+          }}
+        />
       )}
     </div>
   );
 }
 
 export default BuyTickets;
-
