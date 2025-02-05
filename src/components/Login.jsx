@@ -1,7 +1,8 @@
 import React, { useState, useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Pretpostavljamo da koristite react-router-dom za navigaciju
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { UserContext } from '../contexts/UserContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const Login = () => {
     const { setUser } = useContext(UserContext);
@@ -9,6 +10,7 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
+    const { language } = useLanguage(); // Koristi language iz context-a
 
     const toggleShowPassword = () => {
         setShowPassword(!showPassword);
@@ -26,7 +28,7 @@ const Login = () => {
                 }
             });
             console.log(response.data);
-            alert('Login successful');
+            alert(translations[language].loginSuccess);
             // Save the token to local storage or context
             localStorage.setItem('token', response.data.access_token);
             setUser(response.data.user);
@@ -34,19 +36,48 @@ const Login = () => {
         } catch (error) {
             console.error('Error logging in:', error);
             if (error.response && error.response.status === 401) {
-                alert('Invalid credentials. Please check your email and password and try again.');
+                alert(translations[language].invalidCredentials);
             } else {
-                alert('Login failed. Please try again later.');
+                alert(translations[language].loginFailed);
             }
+        }
+    };
+
+    const translations = {
+        en: {
+            loginPage: "Login Page",
+            email: "Email",
+            password: "Password",
+            login: "Login",
+            question1: "Don't have an account?",
+            registerHere: "Register here",
+            question2: "Forgot your password?",
+            resetPassword: "Reset it here",
+            loginSuccess: "Login successful",
+            invalidCredentials: "Invalid credentials. Please check your email and password and try again.",
+            loginFailed: "Login failed. Please try again later."
+        },
+        sr: {
+            loginPage: "Stranica za prijavu",
+            email: "Email",
+            password: "Lozinka",
+            login: "Prijavite se",
+            question1: "Nemate nalog?",
+            registerHere: "Registrujte se ovde",
+            question2: "Zaboravili ste lozinku?",
+            resetPassword: "Resetujte je ovde",
+            loginSuccess: "Prijava uspešna",
+            invalidCredentials: "Neispravni podaci. Proverite email i lozinku i pokušajte ponovo.",
+            loginFailed: "Prijava nije uspela. Pokušajte ponovo kasnije."
         }
     };
 
     return (
         <div className="login-container">
-            <h1>Login Page</h1>
+            <h1>{translations[language].loginPage}</h1>
             <form className="login-form" onSubmit={handleLogin}>
                 <div className="input-group">
-                    <label>Email:</label>
+                    <label>{translations[language].email}:</label>
                     <input
                         type="email"
                         name="email"
@@ -57,7 +88,7 @@ const Login = () => {
                     />
                 </div>
                 <div className="input-group password-field">
-                    <label>Password:</label>
+                    <label>{translations[language].password}:</label>
                     <div className="password-input-wrapper">
                         <input
                             type={showPassword ? "text" : "password"}
@@ -72,19 +103,24 @@ const Login = () => {
                         </span>
                     </div>
                 </div>
-                <button type="submit" className="login-button">Login</button>
+                <button type="submit" className="login-button">{translations[language].login}</button>
             </form>
+
+            {/* Tekst i link za registraciju */}
             <div className="register-link">
-                <p>Don't have an account? <Link to="/register">Register here</Link></p>
+                <p>{translations[language].question1} <Link to="/register">{translations[language].registerHere}</Link></p>
             </div>
+
+            {/* Tekst i link za zaboravljenu lozinku */}
             <div className="forgot-password-link">
-                <p>Forgot your password? <Link to="/forgot-password">Reset it here</Link></p>
+            <p>{translations[language].question2} <Link to="/forgot-password">{translations[language].resetPassword}</Link></p>
             </div>
         </div>
     );
 };
 
 export default Login;
+
 
 
 

@@ -1,14 +1,60 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../contexts/LanguageContext";
 import "./OneEvent.css";
 
 const OneEvent = ({ dogadjaj, isAdmin }) => {
-  const navigate = useNavigate(); // Pozivamo useNavigate
+  const { language } = useLanguage(); // Koristimo language iz context-a
+  const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [matchDetails, setMatchDetails] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [translations, setTranslations] = useState({});
+
+  useEffect(() => {
+    // Prevođenje teksta zavisi od jezika
+    const translatedText = {
+      sr: {
+        header: "Istaknuto",
+        detailsButton: "Detalji",
+        editButton: "Izmeni",
+        deleteButton: "Obriši",
+        loading: "Učitavanje detalja o meču...",
+        matchDetailsHeader: "Detalji o meču",
+        name: "Naziv",
+        location: "Lokacija",
+        date: "Datum",
+        status: "Status",
+        description: "Opis",
+        closeButton: "Zatvori",
+        confirmDelete: "Da li ste sigurni da želite da obrišete ovaj meč?",
+        notLoggedIn: "Niste ulogovani!",
+        successDelete: "Meč uspešno obrisan!",
+        errorDelete: "Došlo je do greške pri brisanju meča.",
+      },
+      en: {
+        header: "Featured",
+        detailsButton: "Details",
+        editButton: "Edit",
+        deleteButton: "Delete",
+        loading: "Loading match details...",
+        matchDetailsHeader: "Match Details",
+        name: "Name",
+        location: "Location",
+        date: "Date",
+        status: "Status",
+        description: "Description",
+        closeButton: "Close",
+        confirmDelete: "Are you sure you want to delete this match?",
+        notLoggedIn: "You are not logged in!",
+        successDelete: "Match successfully deleted!",
+        errorDelete: "Error occurred while deleting the match.",
+      }
+    };
+    setTranslations(translatedText[language]);
+  }, [language]);
 
   const handleOpenModal = async () => {
     setShowModal(true);
@@ -19,7 +65,7 @@ const OneEvent = ({ dogadjaj, isAdmin }) => {
       setMatchDetails(response.data);
       setLoading(false);
     } catch (err) {
-      setError("Ne možemo da pronađemo detalje o ovom meču.");
+      setError(language === 'sr' ? "Ne možemo da pronađemo detalje o ovom meču." : "We can't find match details.");
       console.error(err);
       setLoading(false);
     }
@@ -31,11 +77,11 @@ const OneEvent = ({ dogadjaj, isAdmin }) => {
   };
 
   const handleDelete = async () => {
-    if (window.confirm("Da li ste sigurni da želite da obrišete ovaj meč?")) {
+    if (window.confirm(translations.confirmDelete)) {
       try {
-        const token = localStorage.getItem("token");  // Prilagodite prema vašem načinu čuvanja tokena
+        const token = localStorage.getItem("token");
         if (!token) {
-          alert("Niste ulogovani!");
+          alert(translations.notLoggedIn);
           return;
         }
 
@@ -44,23 +90,22 @@ const OneEvent = ({ dogadjaj, isAdmin }) => {
             Authorization: `Bearer ${token}`,
           },
         });
-        alert("Meč uspešno obrisan!");
-        window.location.reload(); // Može se zameniti sa setovanjem stanja na nivou Matches.jsx
+        alert(translations.successDelete);
+        window.location.reload();
       } catch (err) {
         console.error("Greška prilikom brisanja:", err);
-        alert("Došlo je do greške pri brisanju meča.");
+        alert(translations.errorDelete);
       }
     }
   };
 
   const handleEdit = () => {
-    // Navigiramo na stranicu za izmenu meča
     navigate(`/matches/edit/${dogadjaj.id}`);
   };
 
   return (
     <div className="card">
-      <div className="card-header">Featured</div>
+      <div className="card-header">{translations.header}</div>
       <div className="card-body">
         <h5 className="card-title">{dogadjaj.ime_dogadjaja}</h5>
         <p className="card-text">{dogadjaj.lokacija}</p>
@@ -68,16 +113,16 @@ const OneEvent = ({ dogadjaj, isAdmin }) => {
         <p className="card-text">{dogadjaj.status}</p>
 
         <button onClick={handleOpenModal} className="btn btn-primary">
-          Details
+          {translations.detailsButton}
         </button>
 
         {isAdmin && (
           <>
             <button className="btn btn-warning ms-2" onClick={handleEdit}>
-              Edit
+              {translations.editButton}
             </button>
             <button className="btn btn-danger ms-2" onClick={handleDelete}>
-              Delete
+              {translations.deleteButton}
             </button>
           </>
         )}
@@ -88,19 +133,19 @@ const OneEvent = ({ dogadjaj, isAdmin }) => {
         <div className="modal-overlay" onClick={handleCloseModal}>
           <div className="modal-content">
             {loading ? (
-              <p>Učitavanje detalja o meču...</p>
+              <p>{translations.loading}</p>
             ) : error ? (
               <p>{error}</p>
             ) : (
               <>
-                <h2>Detalji o meču</h2>
-                <p><strong>Naziv:</strong> {matchDetails.ime_dogadjaja}</p>
-                <p><strong>Lokacija:</strong> {matchDetails.lokacija}</p>
-                <p><strong>Datum:</strong> {matchDetails.datum_registracije}</p>
-                <p><strong>Status:</strong> {matchDetails.status}</p>
-                <p><strong>Opis:</strong> {matchDetails.opis}</p>
+                <h2>{translations.matchDetailsHeader}</h2>
+                <p><strong>{translations.name}:</strong> {matchDetails.ime_dogadjaja}</p>
+                <p><strong>{translations.location}:</strong> {matchDetails.lokacija}</p>
+                <p><strong>{translations.date}:</strong> {matchDetails.datum_registracije}</p>
+                <p><strong>{translations.status}:</strong> {matchDetails.status}</p>
+                <p><strong>{translations.description}:</strong> {matchDetails.opis}</p>
                 <button onClick={handleCloseModal} className="btn btn-secondary">
-                  Zatvori
+                  {translations.closeButton}
                 </button>
               </>
             )}
@@ -112,6 +157,7 @@ const OneEvent = ({ dogadjaj, isAdmin }) => {
 };
 
 export default OneEvent;
+
 
 
 

@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; // Pretpostavljamo da koristite react-router-dom za navigaciju
+import { Link, useNavigate } from 'react-router-dom'; // Dodajemo useNavigate
 import axios from 'axios';
+import { useLanguage } from '../contexts/LanguageContext'; // Dodajemo useLanguage kontekst za prevođenje
 
 const Register = () => {
+  const { language } = useLanguage(); // Koristimo language iz context-a
+  const navigate = useNavigate(); // Inicijalizujemo navigate
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -103,18 +106,49 @@ const Register = () => {
       });
       console.log(response.data);
       alert('Registration successful');
+      
+      // Preusmeravamo korisnika na login stranicu nakon uspešne registracije
+      navigate('/login');
     } catch (error) {
       console.error('Error registering user:', error);
       alert('Registration failed');
     }
   };
 
+  // Definisanje prevoda
+  const translations = {
+    en: {
+      registerPage: "Register Page",
+      username: "Username",
+      email: "Email",
+      password: "Password",
+      confirmPassword: "Confirm Password",
+      register: "Register",
+      alreadyHaveAccount: "Already have an account?",
+      loginHere: "Login here",
+      passwordStrength: "Password Strength",
+      passwordsDoNotMatch: "Passwords do not match"
+    },
+    sr: {
+      registerPage: "Stranica za registraciju",
+      username: "Korisničko ime",
+      email: "Email",
+      password: "Lozinka",
+      confirmPassword: "Potvrdite lozinku",
+      register: "Registrujte se",
+      alreadyHaveAccount: "Već imate nalog?",
+      loginHere: "Prijavite se ovde",
+      passwordStrength: "Snaga lozinke",
+      passwordsDoNotMatch: "Lozinke se ne poklapaju"
+    }
+  };
+
   return (
     <div className="login-container">
-      <h1>Register Page</h1>
+      <h1>{translations[language].registerPage}</h1>
       <form className="login-form" onSubmit={handleRegister}>
         <div className="input-group">
-          <label>Username:</label>
+          <label>{translations[language].username}:</label>
           <input
             type="text"
             name="username"
@@ -125,7 +159,7 @@ const Register = () => {
           />
         </div>
         <div className="input-group">
-          <label>Email:</label>
+          <label>{translations[language].email}:</label>
           <input
             type="email"
             name="email"
@@ -136,7 +170,7 @@ const Register = () => {
           />
         </div>
         <div className="input-group password-field">
-          <label>Password:</label>
+          <label>{translations[language].password}:</label>
           <div className="password-input-wrapper">
             <input
               type={showPassword ? "text" : "password"}
@@ -155,7 +189,7 @@ const Register = () => {
           {renderStrengthBar()}
         </div>
         <div className="input-group password-field">
-          <label>Confirm Password:</label>
+          <label>{translations[language].confirmPassword}:</label>
           <div className="password-input-wrapper">
             <input
               type={showConfirmPassword ? "text" : "password"}
@@ -168,18 +202,19 @@ const Register = () => {
               {showConfirmPassword ? "🙈" : "👁️"}
             </span>
           </div>
-          {matchError && <small className="error-message">{matchError}</small>}
+          {matchError && <small className="error-message">{translations[language].passwordsDoNotMatch}</small>}
         </div>
         <button
           type="submit"
           className="login-button"
           disabled={passwordError || matchError}
         >
-          Register
+          {translations[language].register}
         </button>
       </form>
+
       <div className="login-link">
-        <p>Already have an account? <Link to="/login">Login here</Link></p>
+        <p>{translations[language].alreadyHaveAccount} <Link to="/login">{translations[language].loginHere}</Link></p>
       </div>
     </div>
   );

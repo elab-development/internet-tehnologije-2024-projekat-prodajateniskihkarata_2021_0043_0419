@@ -2,8 +2,11 @@ import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../contexts/UserContext';
+import { useLanguage } from '../contexts/LanguageContext'; // Importujemo useLanguage
+import './passwords.css';
 
 const ChangePassword = () => {
+    const { language } = useLanguage(); // Koristimo language iz context-a
     const { user } = useContext(UserContext);
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -18,12 +21,12 @@ const ChangePassword = () => {
     const handleChangePassword = async (e) => {
         e.preventDefault();
         if (newPassword !== confirmNewPassword) {
-            setError('Nova lozinka i potvrda nove lozinke se ne poklapaju.');
+            setError(translations[language].passwordMismatchError);
             return;
         }
 
         if (!user || !user.id) {
-            setError('Korisnik nije prijavljen.');
+            setError(translations[language].userNotLoggedInError);
             console.log('User or user ID is not defined:', user);
             return;
         }
@@ -45,26 +48,50 @@ const ChangePassword = () => {
                 }
             });
 
-            setSuccess('Lozinka je uspešno promenjena.');
+            setSuccess(translations[language].passwordChangeSuccess);
             setError('');
             setCurrentPassword('');
             setNewPassword('');
             setConfirmNewPassword('');
         } catch (error) {
-            setError(error.response?.data?.error || 'Došlo je do greške prilikom promene lozinke.');
+            setError(error.response?.data?.error || translations[language].passwordChangeError);
             setSuccess('');
             console.error('Error changing password:', error.response?.data);
         }
     };
 
-    console.log('User data in ChangePassword:', user); // Dodajemo log
+    // Definisanje prevoda
+    const translations = {
+        en: {
+            changePasswordPage: "Change Password",
+            currentPassword: "Current Password",
+            newPassword: "New Password",
+            confirmNewPassword: "Confirm New Password",
+            changePasswordButton: "Change Password",
+            passwordMismatchError: "New password and confirmation password do not match.",
+            userNotLoggedInError: "User is not logged in.",
+            passwordChangeSuccess: "Password successfully changed.",
+            passwordChangeError: "An error occurred while changing the password. Please try again."
+        },
+        sr: {
+            changePasswordPage: "Promena lozinke",
+            currentPassword: "Trenutna lozinka",
+            newPassword: "Nova lozinka",
+            confirmNewPassword: "Potvrda nove lozinke",
+            changePasswordButton: "Promeni lozinku",
+            passwordMismatchError: "Nova lozinka i potvrda nove lozinke se ne poklapaju.",
+            userNotLoggedInError: "Korisnik nije prijavljen.",
+            passwordChangeSuccess: "Lozinka je uspešno promenjena.",
+            passwordChangeError: "Došlo je do greške prilikom promene lozinke. Pokušajte ponovo."
+        }
+    };
 
     return (
         <div className="change-password-container">
-            <h1>Promena lozinke</h1>
+            <h1>{translations[language].changePasswordPage}</h1>
             <form onSubmit={handleChangePassword}>
                 <div className="input-group">
-                    <label>Trenutna lozinka:</label>
+                    <label>{translations[language].currentPassword}:</label>
                     <div className="password-input-wrapper">
                         <input
                             type={showCurrentPassword ? "text" : "password"}
@@ -78,7 +105,7 @@ const ChangePassword = () => {
                     </div>
                 </div>
                 <div className="input-group">
-                    <label>Nova lozinka:</label>
+                    <label>{translations[language].newPassword}:</label>
                     <div className="password-input-wrapper">
                         <input
                             type={showNewPassword ? "text" : "password"}
@@ -92,7 +119,7 @@ const ChangePassword = () => {
                     </div>
                 </div>
                 <div className="input-group">
-                    <label>Potvrda nove lozinke:</label>
+                    <label>{translations[language].confirmNewPassword}:</label>
                     <div className="password-input-wrapper">
                         <input
                             type={showConfirmNewPassword ? "text" : "password"}
@@ -107,7 +134,7 @@ const ChangePassword = () => {
                 </div>
                 {error && <p className="error-message">{error}</p>}
                 {success && <p className="success-message">{success}</p>}
-                <button type="submit">Promeni lozinku</button>
+                <button type="submit">{translations[language].changePasswordButton}</button>
             </form>
         </div>
     );

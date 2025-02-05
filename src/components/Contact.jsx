@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-// import './Contact.css';
+import { useLanguage } from '../contexts/LanguageContext'; // Dodata podrška za jezike
 
 const Contact = () => {
   const [file, setFile] = useState(null);
@@ -9,6 +9,31 @@ const Contact = () => {
     email: '',
     message: ''
   });
+
+  const { language } = useLanguage(); // Koristi language iz context-a
+
+  const translations = {
+    en: {
+      contactUs: "Contact Us",
+      name: "Name",
+      email: "Email",
+      message: "Message",
+      uploadFile: "Upload File",
+      send: "Send",
+      success: "File and form data uploaded successfully",
+      failure: "Failed to upload file and form data"
+    },
+    sr: {
+      contactUs: "Kontaktirajte nas",
+      name: "Ime",
+      email: "Email",
+      message: "Poruka",
+      uploadFile: "Otpremite fajl",
+      send: "Pošaljite",
+      success: "Fajl i podaci su uspešno poslati",
+      failure: "Došlo je do greške prilikom slanja fajla i podataka"
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -40,34 +65,34 @@ const Contact = () => {
         }
       });
       console.log(response.data);
-      alert('File and form data uploaded successfully');
+      alert(translations[language].success);
     } catch (error) {
       console.error('Error uploading file and form data:', error);
-      alert('Failed to upload file and form data');
+      alert(translations[language].failure);
     }
   };
 
   return (
     <div className="contact-container">
-      <h1>Contact Us</h1>
+      <h1>{translations[language].contactUs}</h1>
       <form className="contact-form" onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="name">Name:</label>
+          <label htmlFor="name">{translations[language].name}:</label>
           <input type="text" id="name" name="name" value={formData.name} onChange={handleInputChange} required />
         </div>
         <div className="form-group">
-          <label htmlFor="email">Email:</label>
+          <label htmlFor="email">{translations[language].email}:</label>
           <input type="email" id="email" name="email" value={formData.email} onChange={handleInputChange} required />
         </div>
         <div className="form-group">
-          <label htmlFor="message">Message:</label>
+          <label htmlFor="message">{translations[language].message}:</label>
           <textarea id="message" name="message" rows="5" value={formData.message} onChange={handleInputChange} required></textarea>
         </div>
         <div className="form-group">
-          <label htmlFor="file">Upload File:</label>
+          <label htmlFor="file">{translations[language].uploadFile}:</label>
           <input type="file" id="file" name="file" onChange={handleFileChange} />
         </div>
-        <button type="submit" className="submit-button">Send</button>
+        <button type="submit" className="submit-button">{translations[language].send}</button>
       </form>
     </div>
   );

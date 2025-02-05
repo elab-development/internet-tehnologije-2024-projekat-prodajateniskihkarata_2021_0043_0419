@@ -1,11 +1,39 @@
 import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { UserContext } from '../contexts/UserContext';
+import { useLanguage } from '../contexts/LanguageContext'; // Dodata podrška za jezike
 
 const NavBar = () => {
     const { user, setUser } = useContext(UserContext);
+    const { language } = useLanguage(); // Koristi language iz context-a
+
     const [isOpen, setIsOpen] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
+
+    const translations = {
+        en: {
+            home: "Home",
+            matches: "Matches",
+            buyTicket: "Buy Ticket",
+            contact: "Contact",
+            users: "Users",
+            changePassword: "Change Password",
+            logout: "Logout",
+            login: "Login",
+            register: "Register"
+        },
+        sr: {
+            home: "Početna",
+            matches: "Mečevi",
+            buyTicket: "Kupovina karte",
+            contact: "Kontakt",
+            users: "Korisnici",
+            changePassword: "Promeni lozinku",
+            logout: "Odjava",
+            login: "Prijava",
+            register: "Registracija"
+        }
+    };
 
     const toggleMenu = () => {
         setIsOpen(!isOpen);
@@ -23,11 +51,11 @@ const NavBar = () => {
     return (
         <nav className="navbar">
             <div className="navbar-left">
-                <Link to="/">Home</Link>
-                <Link to="/matches">Matches</Link>
-                <Link to="/buy-ticket">Buy Ticket</Link>
-                <Link to="/contact">Contact</Link>
-                {user && user.uloga === "admin" && <Link to="/users">Korisnici</Link>}
+                <Link to="/">{translations[language].home}</Link>
+                <Link to="/matches">{translations[language].matches}</Link>
+                <Link to="/buy-ticket">{translations[language].buyTicket}</Link>
+                <Link to="/contact">{translations[language].contact}</Link>
+                {user && user.uloga === "admin" && <Link to="/users">{translations[language].users}</Link>}
                 {user && (
                     <div className="user-menu user-menu-mobile">
                         <span className="user-name" onClick={toggleDropdown}>
@@ -35,8 +63,8 @@ const NavBar = () => {
                         </span>
                         {dropdownOpen && (
                             <div className="dropdown-menu">
-                                <Link to="/change-password" onClick={toggleDropdown}>Change Password</Link>
-                                <Link to="/" onClick={handleLogout}>Logout</Link>
+                                <Link to="/change-password" onClick={toggleDropdown}>{translations[language].changePassword}</Link>
+                                <Link to="/" onClick={handleLogout}>{translations[language].logout}</Link>
                             </div>
                         )}
                     </div>
@@ -50,15 +78,15 @@ const NavBar = () => {
                         </span>
                         {dropdownOpen && (
                             <div className="dropdown-menu">
-                                <Link to="/change-password" onClick={toggleDropdown}>Change Password</Link>
-                                <Link to="/" onClick={handleLogout}>Logout</Link>
+                                <Link to="/change-password" onClick={toggleDropdown}>{translations[language].changePassword}</Link>
+                                <Link to="/" onClick={handleLogout}>{translations[language].logout}</Link>
                             </div>
                         )}
                     </div>
                 ) : (
                     <>
-                        <Link to="/login">Login</Link>
-                        <Link to="/register">Register</Link>
+                        <Link to="/login">{translations[language].login}</Link>
+                        <Link to="/register">{translations[language].register}</Link>
                     </>
                 )}
             </div>
@@ -67,20 +95,20 @@ const NavBar = () => {
             </div>
             {isOpen && (
                 <div className="dropdown-menu">
-                    <Link to="/" onClick={toggleMenu}>Home</Link>
-                    <Link to="/matches" onClick={toggleMenu}>Matches</Link>
-                    <Link to="/buy-ticket" onClick={toggleMenu}>Buy Ticket</Link>
-                    <Link to="/contact" onClick={toggleMenu}>Contact</Link>
-                    {user && user.role === "admin" && <Link to="/users" onClick={toggleMenu}>Korisnici</Link>}
+                    <Link to="/" onClick={toggleMenu}>{translations[language].home}</Link>
+                    <Link to="/matches" onClick={toggleMenu}>{translations[language].matches}</Link>
+                    <Link to="/buy-ticket" onClick={toggleMenu}>{translations[language].buyTicket}</Link>
+                    <Link to="/contact" onClick={toggleMenu}>{translations[language].contact}</Link>
+                    {user && user.uloga === "admin" && <Link to="/users" onClick={toggleMenu}>{translations[language].users}</Link>} {/* Dodan admin link */}
                     {user ? (
                         <>
-                            <Link to="/change-password" onClick={toggleMenu}>Change Password</Link>
-                            <Link to="/" onClick={() => { handleLogout(); toggleMenu(); }}>Logout</Link>
+                            <Link to="/change-password" onClick={toggleMenu}>{translations[language].changePassword}</Link>
+                            <Link to="/" onClick={() => { handleLogout(); toggleMenu(); }}>{translations[language].logout}</Link>
                         </>
                     ) : (
                         <>
-                            <Link to="/login" onClick={toggleMenu}>Login</Link>
-                            <Link to="/register" onClick={toggleMenu}>Register</Link>
+                            <Link to="/login" onClick={toggleMenu}>{translations[language].login}</Link>
+                            <Link to="/register" onClick={toggleMenu}>{translations[language].register}</Link>
                         </>
                     )}
                 </div>
@@ -90,3 +118,5 @@ const NavBar = () => {
 };
 
 export default NavBar;
+
+

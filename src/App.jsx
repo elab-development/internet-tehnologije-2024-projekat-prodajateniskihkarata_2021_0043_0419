@@ -19,6 +19,9 @@ import Users from './components/Users';
 import UsersEdit from './components/UsersEdit';
 import AdminUsers from './components/AdminUsers';
 import MatchEdit from './components/MatchEdit';
+
+import { LanguageProvider } from './contexts/LanguageContext';
+import LanguageSwitcher from './components/LanguageSwitcher';
 //import WeatherMap from "./components/WeatherMap";
 
 import './App.css';
@@ -26,10 +29,12 @@ import './App.css';
 function App() {
     return (
         <UserProvider>
+            <LanguageProvider>
             <Router>
                 <BreadcrumbsProvider>
                     <div className="app-container">
                         <NavBar />
+                        <LanguageSwitcher /> {/* Dodajemo izbor jezika u gornji levi ugao */}
                         <BreadcrumbsComponent />
                         <div className="content">
                             <Routes>
@@ -54,6 +59,7 @@ function App() {
                     </div>
                 </BreadcrumbsProvider>
             </Router>
+            </LanguageProvider>
         </UserProvider>
     );
 }
