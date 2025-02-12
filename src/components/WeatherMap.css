@@ -1,0 +1,54 @@
+.weather-map-container {
+    text-align: center;
+    padding: 20px;
+    background-color: #f8f9fa;
+}
+
+.map {
+    height: 500px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.weather-info {
+    margin-top: 20px;
+    font-size: 18px;
+}
+
+.forecast-container {
+    display: flex;
+    overflow-x: auto;
+    padding: 15px 0;
+    gap: 15px;
+    scrollbar-width: thin;
+}
+
+.forecast-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.forecast-container::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 4px;
+}
+
+.forecast-container::-webkit-scrollbar-track {
+    background-color: #f0f0f0;
+}
+
+.forecast-card {
+    flex: 0 0 25%;
+    max-width: 25%;
+    min-width: 200px;
+}
+
+.forecast-card .card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.forecast-card h5 {
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
