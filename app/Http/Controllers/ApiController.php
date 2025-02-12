@@ -33,7 +33,7 @@ class ApiController extends Controller
         }
     }
 
-    // Primer metoda za ažuriranje događaja
+    // metoda za ažuriranje događaja
     public function updateDogadjaj(Request $request, $id)
     {
         try {
@@ -56,7 +56,7 @@ class ApiController extends Controller
         }
     }
 
-    // Primer metoda za brisanje događaja
+    // metoda za brisanje događaja
     public function deleteDogadjaj($id)
     {
         try {
@@ -70,7 +70,7 @@ class ApiController extends Controller
         }
     }
 
-    // Primer metoda za prikazivanje događaja
+    // metoda za prikazivanje događaja
     public function showDogadjaj($id)
     {
         try {
@@ -83,7 +83,7 @@ class ApiController extends Controller
         }
     }
 
-    // Primer metoda za prikazivanje liste događaja
+    // metoda za prikazivanje liste događaja
     public function indexDogadjaji()
     {
         try {
@@ -158,7 +158,7 @@ class ApiController extends Controller
     //     }
     // }
 
-    // Primer metode za prikazivanje korisnika
+    // metoda za prikazivanje korisnika
     public function showKorisnik($id)
     {
         try {

@@ -72,6 +72,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('korisnici', KorisnikController::class);
     Route::apiResource('dogadjaji', DogadjajController::class)->except(['index', 'show']);
     Route::apiResource('karte', KartaController::class)->except(['index', 'show']);
+    Route::get('/karte', [KartaController::class, 'index']);
     Route::apiResource('tipovi-karata', TipKarteController::class);
     Route::apiResource('placanja', PlacanjeController::class);
 
