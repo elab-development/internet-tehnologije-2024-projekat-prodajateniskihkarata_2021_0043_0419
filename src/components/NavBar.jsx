@@ -17,6 +17,7 @@ const NavBar = () => {
             buyTicket: "Buy Ticket",
             contact: "Contact",
             users: "Users",
+            payment: "Payment",
             changePassword: "Change Password",
             logout: "Logout",
             login: "Login",
@@ -28,6 +29,7 @@ const NavBar = () => {
             buyTicket: "Kupovina karte",
             contact: "Kontakt",
             users: "Korisnici",
+            payment: "Plaćanja",
             changePassword: "Promeni lozinku",
             logout: "Odjava",
             login: "Prijava",
@@ -56,6 +58,7 @@ const NavBar = () => {
                 <Link to="/buy-ticket">{translations[language].buyTicket}</Link>
                 <Link to="/contact">{translations[language].contact}</Link>
                 {user && user.uloga === "admin" && <Link to="/users">{translations[language].users}</Link>}
+                {user && user.uloga === "admin" && <Link to="/payments">{translations[language].payment}</Link>}
                 {user && (
                     <div className="user-menu user-menu-mobile">
                         <span className="user-name" onClick={toggleDropdown}>
@@ -99,7 +102,8 @@ const NavBar = () => {
                     <Link to="/matches" onClick={toggleMenu}>{translations[language].matches}</Link>
                     <Link to="/buy-ticket" onClick={toggleMenu}>{translations[language].buyTicket}</Link>
                     <Link to="/contact" onClick={toggleMenu}>{translations[language].contact}</Link>
-                    {user && user.uloga === "admin" && <Link to="/users" onClick={toggleMenu}>{translations[language].users}</Link>} {/* Dodan admin link */}
+                    {user && user.uloga === "admin" && <Link to="/users" onClick={toggleMenu}>{translations[language].users}</Link>} 
+                    {user && user.uloga === "admin" && <Link to="/payment" onClick={toggleMenu}>{translations[language].payment}</Link>} 
                     {user ? (
                         <>
                             <Link to="/change-password" onClick={toggleMenu}>{translations[language].changePassword}</Link>
@@ -118,5 +122,3 @@ const NavBar = () => {
 };
 
 export default NavBar;
-
-

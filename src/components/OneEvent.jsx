@@ -57,24 +57,32 @@ const OneEvent = ({ dogadjaj, isAdmin }) => {
   }, [language]);
 
   const handleOpenModal = async () => {
+    if (showModal) return; // Ako je već otvoren, ne otvaraj ponovo
     setShowModal(true);
     document.body.classList.add("modal-open");
     setLoading(true);
+  
     try {
       const response = await axios.get(`http://localhost:8000/api/dogadjaji/${dogadjaj.id}`);
       setMatchDetails(response.data);
-      setLoading(false);
     } catch (err) {
-      setError(language === 'sr' ? "Ne možemo da pronađemo detalje o ovom meču." : "We can't find match details.");
+      setError(language === "sr" ? "Ne možemo da pronađemo detalje o ovom meču." : "We can't find match details.");
       console.error(err);
+    } finally {
       setLoading(false);
     }
   };
-
-  const handleCloseModal = () => {
+  
+  
+  
+  const handleCloseModal = (e) => {
+    e.stopPropagation();
     setShowModal(false);
     document.body.classList.remove("modal-open");
   };
+  
+  
+  
 
   const handleDelete = async () => {
     if (window.confirm(translations.confirmDelete)) {
@@ -130,28 +138,31 @@ const OneEvent = ({ dogadjaj, isAdmin }) => {
       <div className="card-footer text-muted">{dogadjaj.datum_registracije}</div>
 
       {showModal && (
-        <div className="modal-overlay" onClick={handleCloseModal}>
-          <div className="modal-content">
-            {loading ? (
-              <p>{translations.loading}</p>
-            ) : error ? (
-              <p>{error}</p>
-            ) : (
-              <>
-                <h2>{translations.matchDetailsHeader}</h2>
-                <p><strong>{translations.name}:</strong> {matchDetails.ime_dogadjaja}</p>
-                <p><strong>{translations.location}:</strong> {matchDetails.lokacija}</p>
-                <p><strong>{translations.date}:</strong> {matchDetails.datum_registracije}</p>
-                <p><strong>{translations.status}:</strong> {matchDetails.status}</p>
-                <p><strong>{translations.description}:</strong> {matchDetails.opis}</p>
-                <button onClick={handleCloseModal} className="btn btn-secondary">
-                  {translations.closeButton}
-                </button>
-              </>
-            )}
-          </div>
-        </div>
+  <div className="modal-overlay">
+    <div className="modal-content">
+      {loading ? (
+        <p>{translations.loading}</p>
+      ) : error ? (
+        <p>{error}</p>
+      ) : (
+        <>
+          <h2>{translations.matchDetailsHeader}</h2>
+          <p><strong>{translations.name}:</strong> {matchDetails.ime_dogadjaja}</p>
+          <p><strong>{translations.location}:</strong> {matchDetails.lokacija}</p>
+          <p><strong>{translations.date}:</strong> {matchDetails.datum_registracije}</p>
+          <p><strong>{translations.status}:</strong> {matchDetails.status}</p>
+          <p><strong>{translations.description}:</strong> {matchDetails.opis}</p>
+          <button onClick={handleCloseModal} className="btn btn-secondary">
+            {translations.closeButton}
+          </button>
+        </>
       )}
+    </div>
+  </div>
+)}
+
+
+
     </div>
   );
 };

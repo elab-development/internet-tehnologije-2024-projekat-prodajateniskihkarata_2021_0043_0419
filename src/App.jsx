@@ -19,9 +19,11 @@ import Users from './components/Users';
 import UsersEdit from './components/UsersEdit';
 import AdminUsers from './components/AdminUsers';
 import MatchEdit from './components/MatchEdit';
-
+import Payments from "./components/Payments";
 import { LanguageProvider } from './contexts/LanguageContext';
 import LanguageSwitcher from './components/LanguageSwitcher';
+
+
 //import WeatherMap from "./components/WeatherMap";
 
 import './App.css';
@@ -52,6 +54,7 @@ function App() {
                                 <Route path="/users" element={<Users />} />
                                 <Route path="/users/edit/:id" element={<UsersEdit />} />
                                 <Route path="/admin-users" element={<AdminUsers />} />
+                                <Route path="/payments" element={<Payments />} />
                                 {/* <Route path="/weather-map" element={<WeatherMap />} /> */}
                             </Routes>
                         </div>

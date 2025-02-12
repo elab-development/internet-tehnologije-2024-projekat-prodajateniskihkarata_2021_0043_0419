@@ -246,10 +246,6 @@
 
 
 /* EKSPORT */
-
-
-/* ... postojeći stilovi ... */
-
 /* Stil za dugmadi za preuzimanje */
 .download-buttons {
     /* display: flex; */
@@ -303,57 +299,6 @@
 
 
 
-/* ... postojeći stilovi ... */
-
-/* Modal Styles */
-body.modal-open {
-    overflow: hidden;  /* Sprečava skrolovanje pozadine */
-  }
-  
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Tamna pozadina */
-    z-index: 9999; /* Modal treba da bude iznad svega */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .modal-content {
-    position: relative;
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    width: 60%;
-    max-width: 500px;
-    z-index: 10000; /* Osiguraj da modal bude iznad pozadine */
-    pointer-events: all; /* Omogućava interakciju sa modalom */
-  }
-  
-  .modal-content h2 {
-    margin-top: 0;
-  }
-  
-  .modal-content p {
-    margin: 10px 0;
-  }
-  
-  .modal-content .btn-secondary {
-    margin-top: 20px;
-  }
-  
-  .modal-overlay,
-  .modal-content {
-    pointer-events: all; /* Omogućava interakciju sa modalom */
-  }
-  
-  body.modal-open *:not(.modal-overlay):not(.modal-content):not(.modal-content *) {
-    pointer-events: none; /* Sprečava interakciju sa pozadinom */
-  }
 
   
   /* .match-details {

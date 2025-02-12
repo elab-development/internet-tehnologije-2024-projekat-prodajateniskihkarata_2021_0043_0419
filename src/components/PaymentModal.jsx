@@ -26,7 +26,7 @@ function PaymentModal({ onClose, onSuccess }) {
     if (!nameRegex.test(cardholderName) || cardholderName.trim() === "") {
       return "Invalid cardholder name";
     }
-    const cardNumberRegex = /^[0-9]{16}$/; // očekujemo 16 cifara
+    const cardNumberRegex = /^[0-9]{16}$/;
     if (!cardNumberRegex.test(cardNumber)) {
       return "Invalid card number (should be 16 digits)";
     }
@@ -65,24 +65,66 @@ function PaymentModal({ onClose, onSuccess }) {
     return "";
   };
 
-  const handleCardConfirm = () => {
+  const handleCardConfirm = async () => {
     const validationError = validateCardPayment();
     if (validationError) {
       setError(validationError);
       return;
     }
     setError("");
+    
+    const paymentData = {
+      korisnik_id: 1,  // Ovdje treba koristiti trenutnog korisnika (ako je ulogovan)
+      iznos: 700,  // Primer iznosa
+      datum_transakcije: "2025-01-14 14:00:00",  // Primer datuma
+      status_transakcije: "pending",  // Status može biti promenljiv
+      tip_placanja: "debit_card",  // Ovaj tip treba da odgovara selektovanom načinu plaćanja
+    };
+
+    await savePaymentToDatabase(paymentData);
     setPaymentMode("success");
   };
 
-  const handleCashierConfirm = () => {
+  const handleCashierConfirm = async () => {
     const validationError = validateCashierPayment();
     if (validationError) {
       setError(validationError);
       return;
     }
     setError("");
+    
+    const paymentData = {
+      korisnik_id: 1,  // Ovdje treba koristiti trenutnog korisnika (ako je ulogovan)
+      iznos: 700,  // Primer iznosa
+      datum_transakcije: "2025-01-14 14:00:00",  // Primer datuma
+      status_transakcije: "pending",  // Status može biti promenljiv
+      tip_placanja: "cashier",  // Plaćanje na blagajni
+    };
+
+    await savePaymentToDatabase(paymentData);
     setPaymentMode("success");
+  };
+
+  const savePaymentToDatabase = async (paymentData) => {
+    try {
+      const response = await fetch('http://localhost:8000/api/placanja', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,  // Ako koristiš token za autentifikaciju
+        },
+        body: JSON.stringify(paymentData),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        console.log("Payment created successfully:", result);
+      } else {
+        console.error("Error creating payment:", result.message);
+      }
+    } catch (err) {
+      console.error("Failed to connect to the server:", err);
+    }
   };
 
   const renderSelection = () => (
@@ -95,6 +137,7 @@ function PaymentModal({ onClose, onSuccess }) {
       <button className="back-btn" onClick={onClose}>Back to Cart</button>
     </div>
   );
+  
 
   const renderCardPayment = () => (
     <div className="payment-content">
@@ -191,6 +234,7 @@ function PaymentModal({ onClose, onSuccess }) {
       </div>
     </div>
   );
+  
 }
 
 export default PaymentModal;
