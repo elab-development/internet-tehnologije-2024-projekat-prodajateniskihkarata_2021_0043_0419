@@ -20,38 +20,57 @@ class KartaFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition(): array
-    {
 
-        // $ceneKarata = [
-        //     'kvalifikacioni meč' => [10, 15, 20, 25, 30, 40, 50],
-        //     'grupna faza' => [15, 20, 25, 35, 45, 60, 75],
-        //     'osmina finala' => [20, 25, 30, 40, 55, 75, 100],
-        //     'četvrt finale' => [30, 40, 50, 60, 75, 100, 125],
-        //     'polu finale' => [40, 50, 60, 75, 90, 125, 150],
-        //     'finale' => [50, 75, 100, 125, 150, 200, 250]
-        // ];
+     public function definition(): array
+{
+    $dogadjaj = Dogadjaj::inRandomOrder()->first(); // Uzmi već postojeći događaj
+    $tipKarte = TipKarte::inRandomOrder()->first(); // Uzmi već postojeći tip karte
 
-        $tipoviKarata = [
-            'tribina' => 0, 'parter' => 1, 'balkon' => 2, 'prvi red' => 3,
-            'loža' => 4, 'VIP loža' => 5, 'VIP salon' => 6
-        ];
+    if (!$dogadjaj || !$tipKarte) {
+        throw new \Exception("Nema dovoljno podataka u bazi. Pokreni seeder!");
+    }
 
-        $dogadjaj = Dogadjaj::factory()->create();
-        $tipKarte = TipKarte::factory()->create();
+    return [
+        'korisnik_id' => Korisnik::factory(),
+        'dogadjaj_id' => $dogadjaj->id,
+        'tip_karte_id' => $tipKarte->id,
+        'status_karte' => $this->faker->randomElement(['validna', 'iskoriscena', 'otkazana']),
+        'qr_kod' => $this->faker->uuid,
+    ];
+}
 
-        // Izračunaj cenu na osnovu naziva događaja i tipa karte
-        //$cena = $ceneKarata[$dogadjaj->ime_dogadjaja][$tipoviKarata[$tipKarte->ime_tipa_karte]];
+    // public function definition(): array
+    // {
 
-        return [
-            'korisnik_id' => Korisnik::factory(),
-            'dogadjaj_id' => $dogadjaj->id,
-            'tip_karte_id' => $tipKarte->id,
-            'status_karte' => $this->faker->randomElement(['validna', 'iskoriscena', 'otkazana']),
-            'qr_kod' => $this->faker->uuid,
-            //$cena = $ceneKarata[$dogadjaj->ime_dogadjaja][$tipoviKarata[$tipKarte->ime_tipa_karte]];
+    //     // $ceneKarata = [
+    //     //     'kvalifikacioni meč' => [10, 15, 20, 25, 30, 40, 50],
+    //     //     'grupna faza' => [15, 20, 25, 35, 45, 60, 75],
+    //     //     'osmina finala' => [20, 25, 30, 40, 55, 75, 100],
+    //     //     'četvrt finale' => [30, 40, 50, 60, 75, 100, 125],
+    //     //     'polu finale' => [40, 50, 60, 75, 90, 125, 150],
+    //     //     'finale' => [50, 75, 100, 125, 150, 200, 250]
+    //     // ];
 
-        ];
+    //     $tipoviKarata = [
+    //         'tribina' => 0, 'parter' => 1, 'balkon' => 2, 'prvi red' => 3,
+    //         'loža' => 4, 'VIP loža' => 5, 'VIP salon' => 6
+    //     ];
+
+    //     $dogadjaj = Dogadjaj::factory()->create();
+    //     $tipKarte = TipKarte::factory()->create();
+
+    //     // Izračunaj cenu na osnovu naziva događaja i tipa karte
+    //     //$cena = $ceneKarata[$dogadjaj->ime_dogadjaja][$tipoviKarata[$tipKarte->ime_tipa_karte]];
+
+    //     return [
+    //         'korisnik_id' => Korisnik::factory(),
+    //         'dogadjaj_id' => $dogadjaj->id,
+    //         'tip_karte_id' => $tipKarte->id,
+    //         'status_karte' => $this->faker->randomElement(['validna', 'iskoriscena', 'otkazana']),
+    //         'qr_kod' => $this->faker->uuid,
+    //         //$cena = $ceneKarata[$dogadjaj->ime_dogadjaja][$tipoviKarata[$tipKarte->ime_tipa_karte]];
+
+    //     ];
 
 
         // return [
@@ -61,5 +80,5 @@ class KartaFactory extends Factory
         //     'status_karte' => $this->faker->randomElement(['validna', 'iskoriscena', 'otkazana']),
         //     'qr_kod' => $this->faker->uuid,
         // ];
-    }
+    
 }
