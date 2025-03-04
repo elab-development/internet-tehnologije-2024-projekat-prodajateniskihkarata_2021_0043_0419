@@ -1,6 +1,8 @@
 // PaymentModal.jsx
 import React, { useState } from 'react';
 import './PaymentModal.css';
+import { useLanguage } from '../contexts/LanguageContext'; // Uvozimo useLanguage
+
 
 function PaymentModal({ onClose, onSuccess }) {
   const [paymentMode, setPaymentMode] = useState("selection");
@@ -19,6 +21,31 @@ function PaymentModal({ onClose, onSuccess }) {
   const [cashierPhone, setCashierPhone] = useState("");
 
   const [error, setError] = useState("");
+
+  const { language } = useLanguage();  // Koristimo jezik iz konteksta
+
+  const translations = {
+    en: {
+      selectPaymentMethod: "Select Payment Method",
+      cardPayment: "Card Payment",
+      cashierPayment: "Pick Up at Cashier",
+      confirm: "Confirm",
+      back: "Back",
+      purchaseSuccessful: "Purchase Successful!",
+      thankYou: "Thank you for your purchase.",
+      errorMessage: "Error, please check the fields."
+    },
+    sr: {
+      selectPaymentMethod: "Izaberite način plaćanja",
+      cardPayment: "Kartično plaćanje",
+      cashierPayment: "Plaćanje na blagajni",
+      confirm: "Potvrdi",
+      back: "Nazad",
+      purchaseSuccessful: "Kupovina uspešna!",
+      thankYou: "Hvala na kupovini.",
+      errorMessage: "Greška, proverite polja."
+    },
+  };
 
   // Validacija za kartično plaćanje
   const validateCardPayment = () => {
@@ -129,19 +156,19 @@ function PaymentModal({ onClose, onSuccess }) {
 
   const renderSelection = () => (
     <div className="payment-content">
-      <h2>Select Payment Method</h2>
+      <h2>{translations[language].selectPaymentMethod}</h2>
       <div className="payment-options">
-        <button onClick={() => setPaymentMode("card")}>Card Payment</button>
-        <button onClick={() => setPaymentMode("cashier")}>Pick Up at Cashier</button>
+        <button onClick={() => setPaymentMode("card")}>{translations[language].cardPayment}</button>
+        <button onClick={() => setPaymentMode("cashier")}>{translations[language].cashierPayment}</button>
       </div>
-      <button className="back-btn" onClick={onClose}>Back to Cart</button>
+      <button className="back-btn" onClick={onClose}>{translations[language].back}</button>
     </div>
   );
   
 
   const renderCardPayment = () => (
     <div className="payment-content">
-      <h2>Card Payment</h2>
+      <h2>{translations[language].cardPayment}</h2>
       <input
         type="text"
         placeholder="Cardholder Name"
@@ -172,17 +199,17 @@ function PaymentModal({ onClose, onSuccess }) {
         value={phone}
         onChange={(e) => setPhone(e.target.value)}
       />
-      {error && <p className="error">{error}</p>}
+      {error && <p className="error">{translations[language].errorMessage}</p>}
       <div className="payment-buttons">
-        <button onClick={handleCardConfirm}>Confirm</button>
-        <button className="back-btn" onClick={() => { setPaymentMode("selection"); setError(""); }}>Back</button>
+        <button onClick={handleCardConfirm}>{translations[language].confirm}</button>
+        <button className="back-btn" onClick={() => { setPaymentMode("selection"); setError(""); }}>{translations[language].back}</button>
       </div>
     </div>
   );
 
   const renderCashierPayment = () => (
     <div className="payment-content">
-      <h2>Pick Up at Cashier</h2>
+      <h2>{translations[language].cashierPayment}</h2>
       <input
         type="text"
         placeholder="Name"
@@ -207,19 +234,19 @@ function PaymentModal({ onClose, onSuccess }) {
         value={cashierPhone}
         onChange={(e) => setCashierPhone(e.target.value)}
       />
-      {error && <p className="error">{error}</p>}
+      {error && <p className="error">{translations[language].errorMessage}</p>}
       <div className="payment-buttons">
-        <button onClick={handleCashierConfirm}>Confirm</button>
-        <button className="back-btn" onClick={() => { setPaymentMode("selection"); setError(""); }}>Back</button>
+        <button onClick={handleCashierConfirm}>{translations[language].confirm}</button>
+        <button className="back-btn" onClick={() => { setPaymentMode("selection"); setError(""); }}>{translations[language].back}</button>
       </div>
     </div>
   );
 
   const renderSuccess = () => (
     <div className="payment-content success">
-      <h2>Purchase Successful!</h2>
+      <h2>{translations[language].purchaseSuccessful}</h2>
       <div className="success-icon">✔️</div>
-      <p>Thank you for your purchase.</p>
+      <p>{translations[language].thankYou}</p>
       <button onClick={onSuccess}>OK</button>
     </div>
   );
@@ -234,7 +261,6 @@ function PaymentModal({ onClose, onSuccess }) {
       </div>
     </div>
   );
-  
 }
 
 export default PaymentModal;

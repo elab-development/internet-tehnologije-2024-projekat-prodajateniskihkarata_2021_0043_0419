@@ -1,8 +1,32 @@
-// Cart.jsx
-import React from "react";
+import React, { useContext } from "react";
 import "./Cart.css";
+import { UserContext } from "../contexts/UserContext";
+import { useLanguage } from "../contexts/LanguageContext"; // Uvozimo useLanguage
 
 function Cart({ cart, setCart, setShowCart, onConfirmPurchase }) {
+  const { user } = useContext(UserContext);
+  const { language } = useLanguage();  // Koristimo jezik iz konteksta
+  const isAuthorized = user && (user.uloga === "admin" || user.uloga === "auth_user");
+
+  const translations = {
+    en: {
+      shoppingCart: "Shopping Cart 🛒",
+      emptyCart: "Your cart is empty.",
+      totalAmount: "Total:",
+      confirmPurchase: "Confirm Purchase",
+      backToCatalog: "Back to Catalog",
+      loginAlert: "You must be logged in to complete the purchase!",
+    },
+    sr: {
+      shoppingCart: "Korpica 🛒",
+      emptyCart: "Vaša korpa je prazna.",
+      totalAmount: "Ukupno:",
+      confirmPurchase: "Potvrdi kupovinu",
+      backToCatalog: "Vrati se na katalog",
+      loginAlert: "Morate biti ulogovani da biste obavili kupovinu!",
+    },
+  };
+
   const totalAmount = cart.reduce((sum, item) => sum + item.quantity * item.price, 0);
 
   const handleIncrease = (index) => {
@@ -27,11 +51,19 @@ function Cart({ cart, setCart, setShowCart, onConfirmPurchase }) {
     setCart((prevCart) => prevCart.filter((_, i) => i !== index));
   };
 
+  const handlePurchaseClick = () => {
+    if (!isAuthorized) {
+      alert(translations[language].loginAlert);
+      return;
+    }
+    onConfirmPurchase(totalAmount);
+  };
+
   return (
     <div className="cart">
-      <h2>Shopping Cart 🛒</h2>
+      <h2>{translations[language].shoppingCart}</h2>
       {cart.length === 0 ? (
-        <p>Your cart is empty.</p>
+        <p>{translations[language].emptyCart}</p>
       ) : (
         <div className="cart-items">
           {cart.map((item, index) => (
@@ -45,18 +77,22 @@ function Cart({ cart, setCart, setShowCart, onConfirmPurchase }) {
                 <div className="cart-controls">
                   <button onClick={() => handleDecrease(index)}>-</button>
                   <button onClick={() => handleIncrease(index)}>+</button>
-                  <button className="remove-btn" onClick={() => handleRemove(index)}>Remove</button>
+                  <button className="remove-btn" onClick={() => handleRemove(index)}>
+                    Remove
+                  </button>
                 </div>
               </div>
             </div>
           ))}
         </div>
       )}
-      <h3 className="total-amount">Total: ${totalAmount.toFixed(2)}</h3>
-      <button className="confirm-btn" onClick={() => onConfirmPurchase(totalAmount)}>
-        Confirm Purchase
+      <h3 className="total-amount">{translations[language].totalAmount} ${totalAmount.toFixed(2)}</h3>
+      <button className="confirm-btn" onClick={handlePurchaseClick}>
+        {translations[language].confirmPurchase}
       </button>
-      <button className="back-btn" onClick={() => setShowCart(false)}>Back to Catalog</button>
+      <button className="back-btn" onClick={() => setShowCart(false)}>
+        {translations[language].backToCatalog}
+      </button>
     </div>
   );
 }

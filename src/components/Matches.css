@@ -213,35 +213,7 @@
     color: #fff;
   }
   
-  .breadcrumb {
-    display: flex;
-    list-style: none;
-    padding: 10px 15px;
-    background-color: rgba(0, 0, 0, 0.7); /* Tamna pozadina */
-    border-radius: 5px;
-    color: white; /* Bela boja teksta */
-    margin-top: 38px;
-  }
-  
-  .breadcrumb-item {
-    margin-right: 10px;
-    color: white;
-    font-weight: bold;
-  }
-  
-  .breadcrumb-item a {
-    color: #007bff; /* Plava boja za link */
-    text-decoration: none;
-  }
-  
-  .breadcrumb-item a:hover {
-    text-decoration: underline;
-  }
-  
-  .breadcrumb-item.active {
-    color: #aaa; /* Svetlija siva za aktivni element */
-    pointer-events: none;
-  }
+ 
 
 
 
