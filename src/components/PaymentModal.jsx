@@ -1,10 +1,10 @@
 // PaymentModal.jsx
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import './PaymentModal.css';
-import { useLanguage } from '../contexts/LanguageContext'; // Uvozimo useLanguage
+import { useLanguage } from '../contexts/LanguageContext';
+import { UserContext } from '../contexts/UserContext';
 
-
-function PaymentModal({ onClose, onSuccess }) {
+function PaymentModal({ onClose, onSuccess, totalAmount }) {
   const [paymentMode, setPaymentMode] = useState("selection");
 
   // Polja za kartično plaćanje
@@ -22,7 +22,8 @@ function PaymentModal({ onClose, onSuccess }) {
 
   const [error, setError] = useState("");
 
-  const { language } = useLanguage();  // Koristimo jezik iz konteksta
+  const { language } = useLanguage();
+  const { user } = useContext(UserContext);
 
   const translations = {
     en: {
@@ -47,6 +48,18 @@ function PaymentModal({ onClose, onSuccess }) {
     },
   };
 
+  // Funkcija za formatiranje trenutnog datuma i vremena u formatu "YYYY-MM-DD HH:mm:ss"
+  const getCurrentFormattedDateTime = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  };
+
   // Validacija za kartično plaćanje
   const validateCardPayment = () => {
     const nameRegex = /^[A-Za-z\s]+$/;
@@ -61,11 +74,11 @@ function PaymentModal({ onClose, onSuccess }) {
     if (!cvvRegex.test(cvv)) {
       return "Invalid CVV (should be 3 digits)";
     }
-    const expiryRegex = /^(0[1-9]|1[0-2])\/([2-9][5-9])$/; // format MM/YY, mesec 01-12, godina od 25
+    const expiryRegex = /^(0[1-9]|1[0-2])\/([2-9][5-9])$/;
     if (!expiryRegex.test(expiry)) {
       return "Invalid expiry date (format MM/YY, month 01-12, year 25+)";
     }
-    const phoneRegex = /^06\d{6,10}$/; // mora početi sa 06, ukupno 8-12 cifara
+    const phoneRegex = /^06\d{6,10}$/;
     if (!phoneRegex.test(phone)) {
       return "Invalid phone number (must start with 06 and have 8-12 digits)";
     }
@@ -92,53 +105,13 @@ function PaymentModal({ onClose, onSuccess }) {
     return "";
   };
 
-  const handleCardConfirm = async () => {
-    const validationError = validateCardPayment();
-    if (validationError) {
-      setError(validationError);
-      return;
-    }
-    setError("");
-    
-    const paymentData = {
-      korisnik_id: 1,  // Ovdje treba koristiti trenutnog korisnika (ako je ulogovan)
-      iznos: 700,  // Primer iznosa
-      datum_transakcije: "2025-01-14 14:00:00",  // Primer datuma
-      status_transakcije: "pending",  // Status može biti promenljiv
-      tip_placanja: "debit_card",  // Ovaj tip treba da odgovara selektovanom načinu plaćanja
-    };
-
-    await savePaymentToDatabase(paymentData);
-    setPaymentMode("success");
-  };
-
-  const handleCashierConfirm = async () => {
-    const validationError = validateCashierPayment();
-    if (validationError) {
-      setError(validationError);
-      return;
-    }
-    setError("");
-    
-    const paymentData = {
-      korisnik_id: 1,  // Ovdje treba koristiti trenutnog korisnika (ako je ulogovan)
-      iznos: 700,  // Primer iznosa
-      datum_transakcije: "2025-01-14 14:00:00",  // Primer datuma
-      status_transakcije: "pending",  // Status može biti promenljiv
-      tip_placanja: "cashier",  // Plaćanje na blagajni
-    };
-
-    await savePaymentToDatabase(paymentData);
-    setPaymentMode("success");
-  };
-
   const savePaymentToDatabase = async (paymentData) => {
     try {
       const response = await fetch('http://localhost:8000/api/placanja', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,  // Ako koristiš token za autentifikaciju
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
         body: JSON.stringify(paymentData),
       });
@@ -154,6 +127,54 @@ function PaymentModal({ onClose, onSuccess }) {
     }
   };
 
+  const handleCardConfirm = async () => {
+    const validationError = validateCardPayment();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+    setError("");
+
+    const formattedDateTime = getCurrentFormattedDateTime();
+    const statuses = ["pending", "completed"];
+    const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+
+    const paymentData = {
+      korisnik_id: user.id,       // Dinamički id trenutnog korisnika
+      iznos: totalAmount,         // Ukupni iznos iz korpe
+      datum_transakcije: formattedDateTime,
+      status_transakcije: randomStatus,
+      tip_placanja: "debit_card",
+    };
+
+    await savePaymentToDatabase(paymentData);
+    setPaymentMode("success");
+  };
+
+  const handleCashierConfirm = async () => {
+    const validationError = validateCashierPayment();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+    setError("");
+
+    const formattedDateTime = getCurrentFormattedDateTime();
+    const statuses = ["pending", "completed"];
+    const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+
+    const paymentData = {
+      korisnik_id: user.id,
+      iznos: totalAmount,
+      datum_transakcije: formattedDateTime,
+      status_transakcije: randomStatus,
+      tip_placanja: "cashier",
+    };
+
+    await savePaymentToDatabase(paymentData);
+    setPaymentMode("success");
+  };
+
   const renderSelection = () => (
     <div className="payment-content">
       <h2>{translations[language].selectPaymentMethod}</h2>
@@ -164,7 +185,6 @@ function PaymentModal({ onClose, onSuccess }) {
       <button className="back-btn" onClick={onClose}>{translations[language].back}</button>
     </div>
   );
-  
 
   const renderCardPayment = () => (
     <div className="payment-content">
@@ -202,7 +222,9 @@ function PaymentModal({ onClose, onSuccess }) {
       {error && <p className="error">{translations[language].errorMessage}</p>}
       <div className="payment-buttons">
         <button onClick={handleCardConfirm}>{translations[language].confirm}</button>
-        <button className="back-btn" onClick={() => { setPaymentMode("selection"); setError(""); }}>{translations[language].back}</button>
+        <button className="back-btn" onClick={() => { setPaymentMode("selection"); setError(""); }}>
+          {translations[language].back}
+        </button>
       </div>
     </div>
   );
@@ -237,7 +259,9 @@ function PaymentModal({ onClose, onSuccess }) {
       {error && <p className="error">{translations[language].errorMessage}</p>}
       <div className="payment-buttons">
         <button onClick={handleCashierConfirm}>{translations[language].confirm}</button>
-        <button className="back-btn" onClick={() => { setPaymentMode("selection"); setError(""); }}>{translations[language].back}</button>
+        <button className="back-btn" onClick={() => { setPaymentMode("selection"); setError(""); }}>
+          {translations[language].back}
+        </button>
       </div>
     </div>
   );

@@ -1,4 +1,3 @@
-// BuyTickets.js
 import React, { useState } from "react";
 import TicketList from "./TicketList";
 import TicketForm from "./TicketForm";
@@ -53,6 +52,9 @@ function BuyTickets() {
     }
   };
 
+  // Izračunavamo ukupni iznos iz korpe (price * quantity)
+  const totalAmount = cart.reduce((total, item) => total + item.quantity * item.price, 0);
+
   return (
     <div className="buyTickets">
       <button className="cart-icon" onClick={handleToggleCart}>
@@ -76,6 +78,7 @@ function BuyTickets() {
 
       {showPaymentModal && (
         <PaymentModal 
+          totalAmount={totalAmount}
           onClose={() => setShowPaymentModal(false)} 
           onSuccess={() => {
             setCart([]);
@@ -89,3 +92,4 @@ function BuyTickets() {
 }
 
 export default BuyTickets;
+
